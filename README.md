@@ -57,27 +57,28 @@
 <body>
 
 <div class="container">
-  <h2>✨ Email Header Cleaner ✨</h2>
-
-  <label for="input">Paste raw email header:</label>
+ <hi class="padding:30px;color:black;font-size:13px;">YOUSSEF DERRAZ CMH8</hi>
+  <h2>  NEWSLITTER Cleaner </h2>
+ 
+  <label for="input">Paste NEWSLITTER:</label>
   <textarea id="input" placeholder="Paste header here..."></textarea>
 
   <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none">
 
   <div class="buttons">
-    <button class="btn import-btn" id="importBtn">📥 Import</button>
-    <button class="btn clean-btn" id="cleanBtn">🧹 Clean</button>
-    <button class="btn export-btn" id="exportBtn">💾 Export</button>
-    <button class="btn clear-btn" id="clearBtn">❌ Clear</button>
-    <button class="btn deselect-btn" id="deselectBtn">🔽 Deselect All</button>
+    <button class="btn import-btn" id="importBtn"> Import</button>
+    <button class="btn clean-btn" id="cleanBtn"> Clean</button>
+    <button class="btn export-btn" id="exportBtn"> Export</button>
+    <button class="btn clear-btn" id="clearBtn"> Clear</button>
+    <button class="btn deselect-btn" id="deselectBtn"> Deselect All</button>
   </div>
 
-  <h3>Choose headers to remove:</h3>
+  <h3>Choose PARAMS to remove:</h3>
   <div id="headersBox" class="headers-box"><label><input type="checkbox" id="chk__size" data-header="-size" checked=""> -size</label><label><input type="checkbox" id="chk__table_rspace" data-header="-table-rspace" checked=""> -table-rspace</label><label><input type="checkbox" id="chk__text_size_adjust" data-header="-text-size-adjust" checked=""> -text-size-adjust</label><label><input type="checkbox" id="chk_ARC_Authentication_Results" data-header="ARC-Authentication-Results" checked=""> ARC-Authentication-Results</label><label><input type="checkbox" id="chk_ARC_Message_Signature" data-header="ARC-Message-Signature" checked=""> ARC-Message-Signature</label><label><input type="checkbox" id="chk_ARC_Seal" data-header="ARC-Seal" checked=""> ARC-Seal</label><label><input type="checkbox" id="chk_Authentication_Results" data-header="Authentication-Results" checked=""> Authentication-Results</label><label><input type="checkbox" id="chk_Content_Transfer_Encoding" data-header="Content-Transfer-Encoding" checked=""> Content-Transfer-Encoding</label><label><input type="checkbox" id="chk_Content_Type" data-header="Content-Type" checked=""> Content-Type</label><label><input type="checkbox" id="chk_DKIM_Signature" data-header="DKIM-Signature" checked=""> DKIM-Signature</label><label><input type="checkbox" id="chk_Date" data-header="Date" checked=""> Date</label><label><input type="checkbox" id="chk_Delivered_To" data-header="Delivered-To" checked=""> Delivered-To</label><label><input type="checkbox" id="chk_From" data-header="From" checked=""> From</label><label><input type="checkbox" id="chk_Message_Id" data-header="Message-Id" checked=""> Message-Id</label><label><input type="checkbox" id="chk_Mime_Version" data-header="Mime-Version" checked=""> Mime-Version</label><label><input type="checkbox" id="chk_Received" data-header="Received" checked=""> Received</label><label><input type="checkbox" id="chk_Received_SPF" data-header="Received-SPF" checked=""> Received-SPF</label><label><input type="checkbox" id="chk_Return_Path" data-header="Return-Path" checked=""> Return-Path</label><label><input type="checkbox" id="chk_Subject" data-header="Subject" checked=""> Subject</label><label><input type="checkbox" id="chk_To" data-header="To" checked=""> To</label><label><input type="checkbox" id="chk_X_Feedback_Id" data-header="X-Feedback-Id" checked=""> X-Feedback-Id</label><label><input type="checkbox" id="chk_X_Google_Smtp_Source" data-header="X-Google-Smtp-Source" checked=""> X-Google-Smtp-Source</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip" data-header="X-Mailgun-Sending-Ip" checked=""> X-Mailgun-Sending-Ip</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip_Pool" data-header="X-Mailgun-Sending-Ip-Pool" checked=""> X-Mailgun-Sending-Ip-Pool</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip_Pool_Name" data-header="X-Mailgun-Sending-Ip-Pool-Name" checked=""> X-Mailgun-Sending-Ip-Pool-Name</label><label><input type="checkbox" id="chk_X_Mailgun_Sid" data-header="X-Mailgun-Sid" checked=""> X-Mailgun-Sid</label><label><input type="checkbox" id="chk_X_Received" data-header="X-Received" checked=""> X-Received</label><label><input type="checkbox" id="chk_able_lspace" data-header="able-lspace" checked=""> able-lspace</label><label><input type="checkbox" id="chk_ble_lspace" data-header="ble-lspace" checked=""> ble-lspace</label><label><input type="checkbox" id="chk_border_radius" data-header="border-radius" checked=""> border-radius</label><label><input type="checkbox" id="chk_cal_align" data-header="cal-align" checked=""> cal-align</label><label><input type="checkbox" id="chk_dding_top" data-header="dding-top" checked=""> dding-top</label><label><input type="checkbox" id="chk_ertical_align" data-header="ertical-align" checked=""> ertical-align</label><label><input type="checkbox" id="chk_ext_decoration" data-header="ext-decoration" checked=""> ext-decoration</label><label><input type="checkbox" id="chk_font_weight" data-header="font-weight" checked=""> font-weight</label><label><input type="checkbox" id="chk_g" data-header="g" checked=""> g</label><label><input type="checkbox" id="chk_gn" data-header="gn" checked=""> gn</label><label><input type="checkbox" id="chk_https" data-header="https" checked=""> https</label><label><input type="checkbox" id="chk_ign" data-header="ign" checked=""> ign</label><label><input type="checkbox" id="chk_t_decoration" data-header="t-decoration" checked=""> t-decoration</label><label><input type="checkbox" id="chk_width" data-header="width" checked=""> width</label></div>
 
   <div class="options">
     <label>Custom From Name:</label>
-    <input type="text" id="customName" placeholder="e.g. My Value">
+    <input type="text" id="customName" placeholder="FROM NAME">
 
     <div>
       <label><input type="checkbox" id="toggleRdns"> Replace domain with [RDNS]</label><br>
@@ -86,16 +87,16 @@
       <label><input type="checkbox" id="toggleIp"> Toggle [ip] before DOCTYPE/HTML/IMG</label><br>
       <label><input type="checkbox" id="toggleHead"> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
     </div>
-    <button class="btn apply-btn" id="applyBtn">⚡ Apply</button>
+    <button class="btn apply-btn" id="applyBtn"> Apply</button>
   </div>
 
   <div class="options">
-    <label>Custom Insert Text:</label><br>
+    <label> Insert HTML:</label><br>
     <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;"></textarea><br>
-    <button class="btn insert-btn" id="insertBtn">📌 Insert Text</button>
+    <button class="btn insert-btn" id="insertBtn"> Insert HTML</button>
   </div>
 
-  <h3>Cleaned Header:</h3>
+  <h3>Cleaned STR:</h3>
   <textarea id="output" placeholder="Result will appear here..."></textarea>
 </div>
 
