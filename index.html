@@ -1,336 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Email Header Cleaner (Final v15)</title>
+  <meta charset="UTF-8" />
+  <title>Email Header Cleaner (v16 with Live Viewer)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      padding: 30px;
-      color: #333;
+    :root{
+      --brand:#6f42c1; --ok:#28a745; --warn:#fd7e14; --info:#17a2b8; --danger:#dc3545; --primary:#007bff;
+      --bg1:#f8f9fa; --bg2:#e9ecef; --text:#333; --muted:#666; --border:#dee2e6; --panel:#fff;
     }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-      padding: 25px;
+    *{box-sizing:border-box}
+    body{
+      font-family:"Segoe UI", Tahoma, sans-serif; background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      padding:30px; color:var(--text);
     }
-    h2 { text-align: center; color: #6f42c1; margin-bottom: 20px; }
-    label { font-weight: 600; color: #495057; }
-    textarea {
-      width: 100%; height: 200px; margin-top: 8px; padding: 12px;
-      border: 2px solid #6f42c1; border-radius: 10px;
-      font-size: 13px; background: #fdfdfd; resize: vertical;
-      white-space: pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-      font-family: monospace;
+    .container{
+      max-width:1200px; margin:auto; background:var(--panel); border-radius:15px; padding:25px;
+      box-shadow:0 8px 18px rgba(0,0,0,.15);
     }
-    .buttons { margin-top: 18px; text-align: center; }
-    .btn {
-      padding: 12px 24px; margin: 8px; border: none; border-radius: 25px;
-      font-size: 14px; cursor: pointer; color: #fff;
-      transition: transform 0.2s, box-shadow 0.2s;
+    h2{ text-align:center; color:var(--brand); margin:0 0 18px }
+    h3{ color:#495057; margin:24px 0 10px }
+    label{ font-weight:600; color:#495057 }
+    textarea{
+      width:100%; min-height:200px; margin-top:8px; padding:12px; border:2px solid var(--brand); border-radius:10px;
+      font-size:13px; background:#fdfdfd; resize:vertical; white-space:pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,.1);
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .import-btn { background: #6f42c1; }
-    .clean-btn  { background: #28a745; }
-    .export-btn { background: #fd7e14; }
-    .clear-btn  { background: #17a2b8; }
-    .deselect-btn { background: #dc3545; }
-    .apply-btn { background: #007bff; }
-    .insert-btn { background: #ff5722; }
-    .headers-box {
-      margin: 20px 0; padding: 15px; border-radius: 10px;
-      background: #f8f9fa; border: 1px solid #dee2e6; max-height: 200px; overflow-y: auto;
+    input[type=text]{
+      padding:10px 12px; border:2px solid var(--brand); border-radius:10px; width:100%; max-width:420px;
+      font-size:14px; margin:6px 0 10px;
     }
-    .headers-box label { display: inline-block; margin-right: 15px; margin-bottom: 8px; }
-    .options { margin: 20px 0; }
-    .options textarea {
-      width: 90%; height: 120px; padding: 10px;
-      border: 2px solid #6f42c1; border-radius: 10px; resize: vertical;
-      font-family: monospace;
+    .buttons{ margin-top:18px; display:flex; flex-wrap:wrap; gap:10px }
+    .btn{ padding:12px 18px; border:none; border-radius:25px; font-size:14px; cursor:pointer; color:#fff;
+      transition:transform .2s, box-shadow .2s }
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.2) }
+    .import-btn{ background:var(--brand) } .clean-btn{ background:var(--ok) } .export-btn{ background:var(--warn) }
+    .clear-btn{ background:var(--info) } .deselect-btn{ background:var(--danger) } .apply-btn{ background:var(--primary) }
+    .insert-btn{ background:#ff5722 }
+
+    .flex-2col{ display:flex; gap:18px; align-items:flex-start }
+    .col{ flex:1; min-width:0 }
+
+    .headers-box{
+      margin: 10px 0 0; padding: 12px; border-radius:10px; background:#f8f9fa; border:1px solid var(--border);
+      max-height:200px; overflow:auto
     }
-    /* style ديال always select */
-    .always-box {
-      margin: 10px 0;
-      padding: 8px;
-      background: #f1f3f5;
-      border-radius: 8px;
-    }
-    .always-inner {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 5px;
-    }
-    #alwaysSelect {
-      flex: 1;
-      padding: 8px;
-      border: 2px solid #6f42c1;
-      border-radius: 8px;
-    }
-    #applySelectBtn, #resetDefaultBtn {
-      padding: 8px 12px;
-      background: #6c757d;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    #applySelectBtn:hover, #resetDefaultBtn:hover {
-      background: #5a6268;
-    }
+    .headers-box label{ display:inline-block; margin:0 12px 8px 0 }
+
+    .options{ margin: 16px 0 }
+    .options textarea{ width:90%; height:120px }
+
+    /* Always select */
+    .always-box{ margin:10px 0; padding:8px; background:#f1f3f5; border-radius:8px }
+    .always-inner{ display:flex; gap:8px; align-items:center; margin-top:5px }
+    #alwaysSelect{ flex:1; padding:8px; border:2px solid var(--brand); border-radius:8px }
+    #applySelectBtn,#resetDefaultBtn{ padding:8px 12px; background:#6c757d; color:#fff; border:none; border-radius:8px; cursor:pointer }
+    #applySelectBtn:hover,#resetDefaultBtn:hover{ background:#5a6268 }
+
+    /* LIVE PREVIEW AREA */
+    .viewer-bar{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin:16px 0 }
+    .viewer-toggles{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+    .toggle{ position:relative; display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden }
+    .toggle button{ background:#fff; color:#495057; border:none; padding:8px 14px; cursor:pointer }
+    .toggle button.active{ background:var(--brand); color:#fff }
+    .live-check{ user-select:none; font-size:13px; color:#495057 }
+
+    .preview-wrap{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; box-shadow: inset 0 1px 0 rgba(0,0,0,.03) }
+    .split{ display:flex; gap:16px }
+    .split .pane{ flex:1; min-width:0 }
+
+    /* Gmail-ish chrome */
+    .gmail-chrome{ background:#f6f8fc; border-bottom:1px solid #e5e7eb; padding:10px 14px; display:flex; gap:10px; align-items:center }
+    .chip{ font-size:12px; background:#e9eefc; color:#3f51b5; padding:4px 8px; border-radius:999px }
+    .gmail-body{ padding:24px; background:#fff; min-height:420px }
+    iframe#gmailFrame{ width:100%; height:480px; border:0; background:#fff }
+
+    /* Source code look */
+    .code-view{ margin:0; padding:14px; height:480px; overflow:auto; background:#0b1020; color:#e6edf3; font-size:12px; line-height:1.4 }
+    .code-view code{ counter-reset: ln }
+    .code-view code span{ display:block; white-space:pre; font-family:inherit }
+    .code-view code span:before{ counter-increment: ln; content: counter(ln); display:inline-block; width:2.5em; margin-right:.75em; color:#6e7681 }
+
+    @media (max-width: 1024px){ .flex-2col{ flex-direction:column } }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div style="font-size:13px;color:black;margin-bottom:8px">YOUSSEF DERRAZ CMH8</div>
+    <h2>NEWSLITTER Cleaner</h2>
 
-<div class="container">
- <hi class="padding:30px;color:black;font-size:13px;">YOUSSEF DERRAZ CMH8</hi>
-  <h2>  NEWSLITTER Cleaner </h2>
- 
-  <label for="input">Paste NEWSLITTER:</label>
-  <textarea id="input" placeholder="Paste header here..."></textarea>
+    <div class="flex-2col">
+      <!-- LEFT: Editor & Tools -->
+      <div class="col">
+        <label for="input">Paste NEWSLITTER:</label>
+        <textarea id="input" placeholder="Paste header here..."></textarea>
 
-  <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none">
+        <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none"/>
+        <div class="buttons">
+          <button class="btn import-btn" id="importBtn">Import</button>
+          <button class="btn clean-btn" id="cleanBtn">Clean</button>
+          <button class="btn export-btn" id="exportBtn">Export</button>
+          <button class="btn clear-btn" id="clearBtn">Clear</button>
+          <button class="btn deselect-btn" id="deselectBtn">Deselect All</button>
+        </div>
 
-  <div class="buttons">
-    <button class="btn import-btn" id="importBtn"> Import</button>
-    <button class="btn clean-btn" id="cleanBtn"> Clean</button>
-    <button class="btn export-btn" id="exportBtn"> Export</button>
-    <button class="btn clear-btn" id="clearBtn"> Clear</button>
-    <button class="btn deselect-btn" id="deselectBtn"> Deselect All</button>
-  </div>
+        <h3>Choose PARAMS to remove:</h3>
+        <div class="always-box">
+          <label><b>(separated bb virgule):</b></label>
+          <div class="always-inner">
+            <input type="text" id="alwaysSelect" />
+            <button type="button" id="applySelectBtn">✔️ Select</button>
+            <button type="button" id="resetDefaultBtn"> Reset Default</button>
+          </div>
+        </div>
+        <div id="headersBox" class="headers-box">
+          <p style="color:#666">👉 Paste or Import a header to see available fields...</p>
+        </div>
 
-  <h3>Choose PARAMS to remove:</h3>
+        <div class="options">
+          <label>Custom From Name:</label>
+          <input type="text" id="customName" placeholder="FROM NAME" />
+          <div style="margin:6px 0 10px">
+            <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label><br/>
+            <label><input type="checkbox" id="toggleRpath"/> Replace domain with [P_RPATH]</label><br/>
+            <label><input type="checkbox" id="toggleEid"/> Add [eid] in Message-ID</label><br/>
+            <label><input type="checkbox" id="toggleIp"/> Toggle [ip] before DOCTYPE/HTML/IMG</label><br/>
+            <label><input type="checkbox" id="toggleHead"/> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
+          </div>
+          <button class="btn apply-btn" id="applyBtn">Apply</button>
+        </div>
 
- 
-  <div class="always-box">
-    <label><b>(separated b virgule):</b></label><br>
-    <div class="always-inner">
-      <input type="text" id="alwaysSelect">
-      <button type="button" id="applySelectBtn">✔️ Select</button>
-      <button type="button" id="resetDefaultBtn">♻️ Reset Default</button>
+        <div class="options">
+          <label>Insert HTML:</label>
+          <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;..."></textarea><br/>
+          <button class="btn insert-btn" id="insertBtn">Insert HTML</button>
+        </div>
+
+        <h3>Cleaned STR:</h3>
+        <textarea id="output" placeholder="Result will appear here..."></textarea>
+      </div>
+
+      <!-- RIGHT: Live Preview -->
+      <div class="col">
+        <div class="viewer-bar">
+          <div class="viewer-toggles">
+            <div class="toggle" role="tablist" aria-label="Viewer mode">
+              <button id="btnGmail" class="active" role="tab" aria-selected="true">📩 Gmail View</button>
+              <button id="btnSource" role="tab" aria-selected="false"></> Source View</button>
+            </div>
+            <span class="chip">Live</span>
+          </div>
+          <label class="live-check"><input type="checkbox" id="liveToggle" checked /> Update while typing</label>
+        </div>
+
+        <div class="preview-wrap">
+          <!-- Gmail-like preview -->
+          <div id="gmailPreview" style="display:block">
+            <div class="gmail-chrome">
+              <span class="chip">Inbox</span>
+              <span style="font-weight:600">Preview</span>
+              <span style="margin-left:auto; font-size:12px; color:#7a7a7a">(Mock Gmail UI)</span>
+            </div>
+            <div class="gmail-body">
+              <iframe id="gmailFrame" title="Gmail-like preview"></iframe>
+            </div>
+          </div>
+          <!-- Raw source pretty view -->
+          <pre id="sourceView" class="code-view" style="display:none"><code id="codeBlock"></code></pre>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="headersBox" class="headers-box">
-    <p style='color:#666'>👉 Paste or Import a header to see available fields...</p>
-  </div>
+  <script>
+    // ====== Original refs ======
+    const fileInput  = document.getElementById('fileInput');
+    const importBtn  = document.getElementById('importBtn');
+    const cleanBtn   = document.getElementById('cleanBtn');
+    const exportBtn  = document.getElementById('exportBtn');
+    const clearBtn   = document.getElementById('clearBtn');
+    const deselectBtn= document.getElementById('deselectBtn');
+    const applyBtn   = document.getElementById('applyBtn');
+    const insertBtn  = document.getElementById('insertBtn');
+    const inputArea  = document.getElementById('input');
+    const outputArea = document.getElementById('output');
+    const headersBox = document.getElementById('headersBox');
+    const customNameInput = document.getElementById('customName');
+    const insertTextInput = document.getElementById('insertText');
 
-  <div class="options">
-    <label>Custom From Name:</label>
-    <input type="text" id="customName" placeholder="FROM NAME">
+    // Always select
+    const alwaysSelectInput = document.getElementById("alwaysSelect");
+    const applySelectBtn = document.getElementById("applySelectBtn");
+    const resetDefaultBtn = document.getElementById("resetDefaultBtn");
+    const defaultHeaders = "ARC-Authentication-Results, ARC-Message-Signature, ARC-Seal, Authentication-Results, DKIM-Signature, Received-SPF, Return-Path, X-Google-Smtp-Source, sender, Delivered-To";
 
-    <div>
-      <label><input type="checkbox" id="toggleRdns"> Replace domain with [RDNS]</label><br>
-      <label><input type="checkbox" id="toggleRpath"> Replace domain with [P_RPATH]</label><br>
-      <label><input type="checkbox" id="toggleEid"> Add [eid] in Message-ID</label><br>
-      <label><input type="checkbox" id="toggleIp">  [ip]</label><br>
-      <label><input type="checkbox" id="toggleHead"> HIDE NEWSLITTER</label>
-    </div>
-    <button class="btn apply-btn" id="applyBtn"> Apply</button>
-  </div>
+    // ====== NEW: Live preview refs ======
+    const btnGmail = document.getElementById('btnGmail');
+    const btnSource = document.getElementById('btnSource');
+    const gmailPreview = document.getElementById('gmailPreview');
+    const sourceView = document.getElementById('sourceView');
+    const codeBlock = document.getElementById('codeBlock');
+    const gmailFrame = document.getElementById('gmailFrame');
+    const liveToggle = document.getElementById('liveToggle');
 
-  <div class="options">
-    <label> Insert HTML:</label><br>
-    <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;"></textarea><br>
-    <button class="btn insert-btn" id="insertBtn"> Insert HTML</button>
-  </div>
-
-  <h3>Cleaned STR:</h3>
-  <textarea id="output" placeholder="Result will appear here..."></textarea>
-</div>
-
-<script>
-const fileInput  = document.getElementById('fileInput');
-const importBtn  = document.getElementById('importBtn');
-const cleanBtn   = document.getElementById('cleanBtn');
-const exportBtn  = document.getElementById('exportBtn');
-const clearBtn   = document.getElementById('clearBtn');
-const deselectBtn= document.getElementById('deselectBtn');
-const applyBtn   = document.getElementById('applyBtn');
-const insertBtn  = document.getElementById('insertBtn');
-const inputArea  = document.getElementById('input');
-const outputArea = document.getElementById('output');
-const headersBox = document.getElementById('headersBox');
-const customNameInput = document.getElementById('customName');
-const insertTextInput = document.getElementById('insertText');
-
-// always select elements
-const alwaysSelectInput = document.getElementById("alwaysSelect");
-const applySelectBtn = document.getElementById("applySelectBtn");
-const resetDefaultBtn = document.getElementById("resetDefaultBtn");
-const defaultHeaders = "ARC-Authentication-Results, ARC-Message-Signature, ARC-Seal, Authentication-Results, DKIM-Signature, Received-SPF, Return-Path, X-Google-Smtp-Source, sender, Delivered-To";
-
-importBtn.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', async (evt) => {
-  const file = evt.target.files[0];
-  if (!file) return;
-  inputArea.value = await file.text();
-  fileInput.value = '';
-  buildHeaderCheckboxes();
-});
-inputArea.addEventListener('input', buildHeaderCheckboxes);
-
-function buildHeaderCheckboxes() {
-  const text = inputArea.value;
-  if (!text.trim()) {
-    headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>";
-    return;
-  }
-  const matches = [...text.matchAll(/^([\w\-]+):/gmi)].map(m => m[1]);
-  const unique = [...new Set(matches)].sort();
-  if (!unique.length) {
-    headersBox.innerHTML = "<p style='color:#666'>No headers found.</p>";
-    return;
-  }
-
-  headersBox.innerHTML = "";
-  unique.forEach(h => {
-    const id = "chk_" + h.replace(/[^a-z0-9]/gi, "_");
-    const label = document.createElement("label");
-    label.innerHTML = `<input type="checkbox" id="${id}" data-header="${h}" checked> ${h}`;
-    headersBox.appendChild(label);
-  });
-
-  applyAlwaysSelect();
-}
-
-function removeHeaderBlock(text, header) {
-  const re = new RegExp("(^" + header + ".*(?:\\r?\\n[ \\t].*)*)", "gmi");
-  return text.replace(re, "");
-}
-
-function cleanHeader() {
-  let text = inputArea.value;
-  if (!text.trim()) { alert("Paste or import a header first."); return; }
-  const checks = headersBox.querySelectorAll("input[type=checkbox]:checked");
-  checks.forEach(chk => { const h = chk.dataset.header; text = removeHeaderBlock(text,h); });
-  text = text.replace(/^Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
-  text = text.replace(/^X-Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
-  text = text.replace(/^\s*[\r\n]/gm, "");
-  outputArea.value = text.trim();
-}
-cleanBtn.addEventListener('click', cleanHeader);
-
-exportBtn.addEventListener('click', () => {
-  const text = outputArea.value;
-  if (!text.trim()) { alert("Nothing to export."); return; }
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "cleaned_header.txt";
-  link.click();
-});
-
-clearBtn.addEventListener('click', () => {
-  inputArea.value = "";
-  outputArea.value = "";
-  headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>";
-});
-
-deselectBtn.addEventListener('click', () => {
-  const checks = headersBox.querySelectorAll("input[type=checkbox]");
-  checks.forEach(chk => chk.checked = false);
-});
-
-// Apply transformations
-function applyTransformations() {
-  let text = outputArea.value || inputArea.value;
-  if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
-
-  const custom = customNameInput.value.trim();
-
-  // RDNS
-  if (document.getElementById("toggleRdns").checked) {
-    text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
-      const newDisp = custom || disp || "";
-      return `From: ${newDisp ? newDisp + " " : ""}<${user}@[RDNS]>`;
+    // File import
+    importBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async (evt) => {
+      const file = evt.target.files[0];
+      if (!file) return;
+      inputArea.value = await file.text();
+      fileInput.value = '';
+      buildHeaderCheckboxes();
+      maybeUpdatePreview();
     });
-  }
+    inputArea.addEventListener('input', () => { buildHeaderCheckboxes(); maybeUpdatePreview(); });
 
-  // RPATH
-  if (document.getElementById("toggleRpath").checked) {
-    text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
-      const newDisp = custom || disp || "";
-      return `From: ${newDisp ? newDisp + " " : ""}<${user}@[P_RPATH]>`;
+    function buildHeaderCheckboxes() {
+      const text = inputArea.value;
+      if (!text.trim()) { headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>"; return; }
+      const matches = [...text.matchAll(/^([\w\-]+):/gmi)].map(m => m[1]);
+      const unique = [...new Set(matches)].sort();
+      if (!unique.length) { headersBox.innerHTML = "<p style='color:#666'>No headers found.</p>"; return; }
+      headersBox.innerHTML = "";
+      unique.forEach(h => {
+        const id = "chk_" + h.replace(/[^a-z0-9]/gi, "_");
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" id="${id}" data-header="${h}" checked> ${h}`;
+        headersBox.appendChild(label);
+      });
+      applyAlwaysSelect();
+    }
+
+    function removeHeaderBlock(text, header) {
+      const re = new RegExp("(^" + header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ".*(?:\\r?\\n[ \\t].*)*)", "gmi");
+      return text.replace(re, "");
+    }
+
+    function cleanHeader() {
+      let text = inputArea.value;
+      if (!text.trim()) { alert("Paste or import a header first."); return; }
+      const checks = headersBox.querySelectorAll("input[type=checkbox]:checked");
+      checks.forEach(chk => { const h = chk.dataset.header; text = removeHeaderBlock(text,h); });
+      // Keep user's explicit removes for Received: by / X-Received: by
+      text = text.replace(/^Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
+      text = text.replace(/^X-Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
+      text = text.replace(/^\s*[\r\n]/gm, "");
+      outputArea.value = text.trim();
+    }
+    cleanBtn.addEventListener('click', () => { cleanHeader(); maybeUpdatePreview(); });
+
+    exportBtn.addEventListener('click', () => {
+      const text = outputArea.value;
+      if (!text.trim()) { alert("Nothing to export."); return; }
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "cleaned_header.txt";
+      link.click();
     });
-  }
 
-  // Message-ID eid
-  if (document.getElementById("toggleEid").checked) {
-    text = text.replace(/^Message-ID:\s*<([^@>]+)@([^>]+)>/gmi, "Message-ID: <$1[eid]@$2>");
-  }
+    clearBtn.addEventListener('click', () => {
+      inputArea.value = ""; outputArea.value = "";
+      headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>";
+      maybeUpdatePreview();
+    });
 
-  // Toggle [ip] -> always in new line
-  if (document.getElementById("toggleIp").checked) {
-    if (!text.includes("[ip]")) {
-      text = text.replace(/(<!DOCTYPE|<html|<img)/i, "\n[ip]\n$1");
+    deselectBtn.addEventListener('click', () => {
+      const checks = headersBox.querySelectorAll("input[type=checkbox]");
+      checks.forEach(chk => chk.checked = false);
+    });
+
+    // Apply transformations
+    function applyTransformations() {
+      let text = outputArea.value || inputArea.value;
+      if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
+
+      const custom = customNameInput.value.trim();
+
+      // RDNS
+      if (document.getElementById("toggleRdns").checked) {
+        text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
+          const newDisp = custom || disp || "";
+          return `From: ${newDisp ? newDisp + " " : ""}<${user}@[RDNS]>`;
+        });
+      }
+
+      // RPATH
+      if (document.getElementById("toggleRpath").checked) {
+        text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
+          const newDisp = custom || disp || "";
+          return `From: ${newDisp ? newDisp + " " : ""}<${user}@[P_RPATH]>`;
+        });
+      }
+
+      // Message-ID eid
+      if (document.getElementById("toggleEid").checked) {
+        text = text.replace(/^Message-ID:\s*<([^@>]+)@([^>]+)>/gmi, "Message-ID: <$1[eid]@$2>");
+      }
+
+      // Toggle [ip]
+      if (document.getElementById("toggleIp").checked) {
+        if (!text.includes("[ip]")) {
+          text = text.replace(/(<!DOCTYPE|<html|<img)/i, "\n[ip]\n$1");
+        }
+      } else {
+        text = text.replace(/\s*\[ip\]\s*/gi, "");
+      }
+
+      // Add <head><select>
+      if (document.getElementById("toggleHead").checked) {
+        if (!text.includes("<head><select>")) {
+          text = text.replace(/(<!DOCTYPE[^>]*>)/i, "$1\n<head><select>");
+        }
+      } else {
+        text = text.replace(/<head><select>/gi, "");
+      }
+
+      outputArea.value = text.trim();
     }
-  } else {
-    text = text.replace(/\s*\[ip\]\s*/gi, "");
-  }
+    applyBtn.addEventListener('click', () => { applyTransformations(); maybeUpdatePreview(); });
 
-  // Add <head><select> -> always in new line
-  if (document.getElementById("toggleHead").checked) {
-    if (!text.includes("<head><select>")) {
-      text = text.replace(/(<!DOCTYPE[^>]*>)/i, "$1\n<head><select>");
+    // Insert custom text above <head><select>
+    insertBtn.addEventListener('click', () => {
+      let text = outputArea.value || inputArea.value;
+      if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
+      const customText = insertTextInput.value;
+      if (!customText.trim()) { alert("Write something first."); return; }
+      text = text.replace(/(<head><select>)/i, "\n" + customText + "\n$1");
+      outputArea.value = text;
+      maybeUpdatePreview();
+    });
+
+    // Always select functions
+    function applyAlwaysSelect() {
+      const input = alwaysSelectInput.value;
+      if (!input.trim()) return;
+      const mustSelect = input.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+      const checks = document.querySelectorAll("#headersBox input[type=checkbox]");
+      checks.forEach(chk => { if (mustSelect.includes(chk.dataset.header.toLowerCase())) { chk.checked = true; } });
     }
-  } else {
-    text = text.replace(/<head><select>/gi, "");
-  }
+    alwaysSelectInput.addEventListener("input", () => { localStorage.setItem("alwaysSelectParams", alwaysSelectInput.value); });
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem("alwaysSelectParams");
+      alwaysSelectInput.value = saved || defaultHeaders;
+      // initial preview
+      maybeUpdatePreview();
+    });
+    applySelectBtn.addEventListener("click", () => { applyAlwaysSelect(); });
+    resetDefaultBtn.addEventListener("click", () => {
+      alwaysSelectInput.value = defaultHeaders; applyAlwaysSelect(); localStorage.setItem("alwaysSelectParams", defaultHeaders);
+    });
 
-  outputArea.value = text.trim();
-}
-applyBtn.addEventListener('click', applyTransformations);
-
-// Insert custom text above <head><select>
-insertBtn.addEventListener('click', () => {
-  let text = outputArea.value || inputArea.value;
-  if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
-  const customText = insertTextInput.value;
-  if (!customText.trim()) { alert("Write something first."); return; }
-
-  text = text.replace(/(<head><select>)/i, "\n" + customText + "\n$1");
-  outputArea.value = text;
-});
-
-// Always select functions
-function applyAlwaysSelect() {
-  const input = alwaysSelectInput.value;
-  if (!input.trim()) return;
-  const mustSelect = input.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
-  const checks = document.querySelectorAll("#headersBox input[type=checkbox]");
-  checks.forEach(chk => {
-    if (mustSelect.includes(chk.dataset.header.toLowerCase())) {
-      chk.checked = true;
+    // ====== NEW: Live preview logic ======
+    function getWorkingText(){
+      const out = outputArea.value.trim();
+      const inp = inputArea.value.trim();
+      return out || inp || '';
     }
-  });
-}
+    function extractHtmlDocument(raw){
+      if(!raw) return '';
+      const idxDoc = raw.search(/<!DOCTYPE[\s\S]*?<html[\s\S]*?>/i);
+      const idxHtml = raw.search(/<html[\s\S]*?>/i);
+      const start = idxDoc >= 0 ? idxDoc : (idxHtml >= 0 ? idxHtml : -1);
+      if(start >= 0){ return raw.slice(start); }
+      // fallback: if not found, wrap the whole thing in minimal HTML so you still see something
+      const escaped = raw.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+      return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Preview</title></head><body><pre style="white-space:pre-wrap">${escaped}</pre></body></html>`;
+    }
+    function setIframeHtml(html){
+      const doc = gmailFrame.contentDocument || gmailFrame.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+    }
+    function setCodeView(html){
+      // simple syntax-ish highlighting by splitting lines and escaping
+      const safe = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const lines = safe.split(/\r?\n/).map(l => `<span>${l}</span>`).join('');
+      codeBlock.innerHTML = lines;
+    }
+    function updatePreview(){
+      const raw = getWorkingText();
+      const html = extractHtmlDocument(raw);
+      setIframeHtml(html);
+      setCodeView(html);
+    }
+    function maybeUpdatePreview(){ if(liveToggle.checked) updatePreview(); }
 
-alwaysSelectInput.addEventListener("input", () => {
-  localStorage.setItem("alwaysSelectParams", alwaysSelectInput.value);
-});
+    outputArea.addEventListener('input', maybeUpdatePreview);
+    liveToggle.addEventListener('change', () => { if(liveToggle.checked) updatePreview(); });
 
-window.addEventListener("load", () => {
-  const saved = localStorage.getItem("alwaysSelectParams");
-  alwaysSelectInput.value = saved || defaultHeaders;
-});
-
-applySelectBtn.addEventListener("click", () => {
-  applyAlwaysSelect();
-});
-
-resetDefaultBtn.addEventListener("click", () => {
-  alwaysSelectInput.value = defaultHeaders;
-  applyAlwaysSelect();
-  localStorage.setItem("alwaysSelectParams", defaultHeaders);
-});
-
-</script>
-
+    // Toggle buttons
+    function setActive(btn){
+      [btnGmail, btnSource].forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    btnGmail.addEventListener('click', () => {
+      setActive(btnGmail);
+      gmailPreview.style.display='block';
+      sourceView.style.display='none';
+    });
+    btnSource.addEventListener('click', () => {
+      setActive(btnSource);
+      gmailPreview.style.display='none';
+      sourceView.style.display='block';
+    });
+  </script>
 </body>
 </html>
