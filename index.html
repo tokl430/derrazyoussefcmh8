@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/y.derraz/Downloads/new%202000.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <title>Email Header Cleaner (Final v14)</title>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Header Cleaner (Final v15)</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, sans-serif;
@@ -52,6 +52,37 @@
       border: 2px solid #6f42c1; border-radius: 10px; resize: vertical;
       font-family: monospace;
     }
+    /* style ديال always select */
+    .always-box {
+      margin: 10px 0;
+      padding: 8px;
+      background: #f1f3f5;
+      border-radius: 8px;
+    }
+    .always-inner {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 5px;
+    }
+    #alwaysSelect {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #6f42c1;
+      border-radius: 8px;
+    }
+    #applySelectBtn, #resetDefaultBtn {
+      padding: 8px 12px;
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #applySelectBtn:hover, #resetDefaultBtn:hover {
+      background: #5a6268;
+    }
   </style>
 </head>
 <body>
@@ -74,7 +105,20 @@
   </div>
 
   <h3>Choose PARAMS to remove:</h3>
-  <div id="headersBox" class="headers-box"><label><input type="checkbox" id="chk__size" data-header="-size" checked=""> -size</label><label><input type="checkbox" id="chk__table_rspace" data-header="-table-rspace" checked=""> -table-rspace</label><label><input type="checkbox" id="chk__text_size_adjust" data-header="-text-size-adjust" checked=""> -text-size-adjust</label><label><input type="checkbox" id="chk_ARC_Authentication_Results" data-header="ARC-Authentication-Results" checked=""> ARC-Authentication-Results</label><label><input type="checkbox" id="chk_ARC_Message_Signature" data-header="ARC-Message-Signature" checked=""> ARC-Message-Signature</label><label><input type="checkbox" id="chk_ARC_Seal" data-header="ARC-Seal" checked=""> ARC-Seal</label><label><input type="checkbox" id="chk_Authentication_Results" data-header="Authentication-Results" checked=""> Authentication-Results</label><label><input type="checkbox" id="chk_Content_Transfer_Encoding" data-header="Content-Transfer-Encoding" checked=""> Content-Transfer-Encoding</label><label><input type="checkbox" id="chk_Content_Type" data-header="Content-Type" checked=""> Content-Type</label><label><input type="checkbox" id="chk_DKIM_Signature" data-header="DKIM-Signature" checked=""> DKIM-Signature</label><label><input type="checkbox" id="chk_Date" data-header="Date" checked=""> Date</label><label><input type="checkbox" id="chk_Delivered_To" data-header="Delivered-To" checked=""> Delivered-To</label><label><input type="checkbox" id="chk_From" data-header="From" checked=""> From</label><label><input type="checkbox" id="chk_Message_Id" data-header="Message-Id" checked=""> Message-Id</label><label><input type="checkbox" id="chk_Mime_Version" data-header="Mime-Version" checked=""> Mime-Version</label><label><input type="checkbox" id="chk_Received" data-header="Received" checked=""> Received</label><label><input type="checkbox" id="chk_Received_SPF" data-header="Received-SPF" checked=""> Received-SPF</label><label><input type="checkbox" id="chk_Return_Path" data-header="Return-Path" checked=""> Return-Path</label><label><input type="checkbox" id="chk_Subject" data-header="Subject" checked=""> Subject</label><label><input type="checkbox" id="chk_To" data-header="To" checked=""> To</label><label><input type="checkbox" id="chk_X_Feedback_Id" data-header="X-Feedback-Id" checked=""> X-Feedback-Id</label><label><input type="checkbox" id="chk_X_Google_Smtp_Source" data-header="X-Google-Smtp-Source" checked=""> X-Google-Smtp-Source</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip" data-header="X-Mailgun-Sending-Ip" checked=""> X-Mailgun-Sending-Ip</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip_Pool" data-header="X-Mailgun-Sending-Ip-Pool" checked=""> X-Mailgun-Sending-Ip-Pool</label><label><input type="checkbox" id="chk_X_Mailgun_Sending_Ip_Pool_Name" data-header="X-Mailgun-Sending-Ip-Pool-Name" checked=""> X-Mailgun-Sending-Ip-Pool-Name</label><label><input type="checkbox" id="chk_X_Mailgun_Sid" data-header="X-Mailgun-Sid" checked=""> X-Mailgun-Sid</label><label><input type="checkbox" id="chk_X_Received" data-header="X-Received" checked=""> X-Received</label><label><input type="checkbox" id="chk_able_lspace" data-header="able-lspace" checked=""> able-lspace</label><label><input type="checkbox" id="chk_ble_lspace" data-header="ble-lspace" checked=""> ble-lspace</label><label><input type="checkbox" id="chk_border_radius" data-header="border-radius" checked=""> border-radius</label><label><input type="checkbox" id="chk_cal_align" data-header="cal-align" checked=""> cal-align</label><label><input type="checkbox" id="chk_dding_top" data-header="dding-top" checked=""> dding-top</label><label><input type="checkbox" id="chk_ertical_align" data-header="ertical-align" checked=""> ertical-align</label><label><input type="checkbox" id="chk_ext_decoration" data-header="ext-decoration" checked=""> ext-decoration</label><label><input type="checkbox" id="chk_font_weight" data-header="font-weight" checked=""> font-weight</label><label><input type="checkbox" id="chk_g" data-header="g" checked=""> g</label><label><input type="checkbox" id="chk_gn" data-header="gn" checked=""> gn</label><label><input type="checkbox" id="chk_https" data-header="https" checked=""> https</label><label><input type="checkbox" id="chk_ign" data-header="ign" checked=""> ign</label><label><input type="checkbox" id="chk_t_decoration" data-header="t-decoration" checked=""> t-decoration</label><label><input type="checkbox" id="chk_width" data-header="width" checked=""> width</label></div>
+
+  <!-- الخانة الجديدة Always Select -->
+  <div class="always-box">
+    <label><b>ديما خلي هاد الباراميترات متشدين (separated b virgule):</b></label><br>
+    <div class="always-inner">
+      <input type="text" id="alwaysSelect">
+      <button type="button" id="applySelectBtn">✔️ Select</button>
+      <button type="button" id="resetDefaultBtn">♻️ Reset Default</button>
+    </div>
+  </div>
+
+  <div id="headersBox" class="headers-box">
+    <p style='color:#666'>👉 Paste or Import a header to see available fields...</p>
+  </div>
 
   <div class="options">
     <label>Custom From Name:</label>
@@ -115,6 +159,12 @@ const headersBox = document.getElementById('headersBox');
 const customNameInput = document.getElementById('customName');
 const insertTextInput = document.getElementById('insertText');
 
+// always select elements
+const alwaysSelectInput = document.getElementById("alwaysSelect");
+const applySelectBtn = document.getElementById("applySelectBtn");
+const resetDefaultBtn = document.getElementById("resetDefaultBtn");
+const defaultHeaders = "ARC-Authentication-Results, ARC-Message-Signature, ARC-Seal, Authentication-Results, DKIM-Signature, Received-SPF, Return-Path, X-Google-Smtp-Source, sender, Delivered-To";
+
 importBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', async (evt) => {
   const file = evt.target.files[0];
@@ -145,6 +195,8 @@ function buildHeaderCheckboxes() {
     label.innerHTML = `<input type="checkbox" id="${id}" data-header="${h}" checked> ${h}`;
     headersBox.appendChild(label);
   });
+
+  applyAlwaysSelect();
 }
 
 function removeHeaderBlock(text, header) {
@@ -245,8 +297,40 @@ insertBtn.addEventListener('click', () => {
   text = text.replace(/(<head><select>)/i, "\n" + customText + "\n$1");
   outputArea.value = text;
 });
+
+// Always select functions
+function applyAlwaysSelect() {
+  const input = alwaysSelectInput.value;
+  if (!input.trim()) return;
+  const mustSelect = input.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  const checks = document.querySelectorAll("#headersBox input[type=checkbox]");
+  checks.forEach(chk => {
+    if (mustSelect.includes(chk.dataset.header.toLowerCase())) {
+      chk.checked = true;
+    }
+  });
+}
+
+alwaysSelectInput.addEventListener("input", () => {
+  localStorage.setItem("alwaysSelectParams", alwaysSelectInput.value);
+});
+
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("alwaysSelectParams");
+  alwaysSelectInput.value = saved || defaultHeaders;
+});
+
+applySelectBtn.addEventListener("click", () => {
+  applyAlwaysSelect();
+});
+
+resetDefaultBtn.addEventListener("click", () => {
+  alwaysSelectInput.value = defaultHeaders;
+  applyAlwaysSelect();
+  localStorage.setItem("alwaysSelectParams", defaultHeaders);
+});
+
 </script>
 
-
-
-</body></html>
+</body>
+</html>
