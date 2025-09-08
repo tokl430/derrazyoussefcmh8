@@ -2,48 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Email Header Cleaner (v16 with Live Viewer)</title>
+  <title>Email Header Cleaner & Encoder/Decoder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
       --brand:#6f42c1; --ok:#28a745; --warn:#fd7e14; --info:#17a2b8; --danger:#dc3545; --primary:#007bff;
       --bg1:#f8f9fa; --bg2:#e9ecef; --text:#333; --muted:#666; --border:#dee2e6; --panel:#fff;
+      --dark-bg1:#1a1a2e; --dark-bg2:#16213e; --dark-text:#e6e6e6; --dark-muted:#a0a0a0; --dark-border:#2d4059; --dark-panel:#0f3460;
     }
     *{box-sizing:border-box}
     body{
       font-family:"Segoe UI", Tahoma, sans-serif; background:linear-gradient(135deg,var(--bg1),var(--bg2));
-      padding:30px; color:var(--text);
+      padding:30px; color:var(--text); transition: background 0.3s, color 0.3s;
     }
     .container{
       max-width:1200px; margin:auto; background:var(--panel); border-radius:15px; padding:25px;
-      box-shadow:0 8px 18px rgba(0,0,0,.15);
+      box-shadow:0 8px 18px rgba(0,0,0,.15); transition: background 0.3s, box-shadow 0.3s;
     }
     h2{ text-align:center; color:var(--brand); margin:0 0 18px }
-    h3{ color:#495057; margin:24px 0 10px }
-    label{ font-weight:600; color:#495057 }
+    h3{ color:#495057; margin:24px 0 10px; transition: color 0.3s; }
+    label{ font-weight:600; color:#495057; transition: color 0.3s; }
     textarea{
       width:100%; min-height:200px; margin-top:8px; padding:12px; border:2px solid var(--brand); border-radius:10px;
       font-size:13px; background:#fdfdfd; resize:vertical; white-space:pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,.1);
       font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      transition: background 0.3s, border-color 0.3s;
     }
     input[type=text]{
       padding:10px 12px; border:2px solid var(--brand); border-radius:10px; width:100%; max-width:420px;
-      font-size:14px; margin:6px 0 10px;
+      font-size:14px; margin:6px 0 10px; transition: background 0.3s, border-color 0.3s, color 0.3s;
     }
     .buttons{ margin-top:18px; display:flex; flex-wrap:wrap; gap:10px }
     .btn{ padding:12px 18px; border:none; border-radius:25px; font-size:14px; cursor:pointer; color:#fff;
-      transition:transform .2s, box-shadow .2s }
+      transition:transform .2s, box-shadow .2s, background 0.3s; }
     .btn:hover{ transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.2) }
     .import-btn{ background:var(--brand) } .clean-btn{ background:var(--ok) } .export-btn{ background:var(--warn) }
     .clear-btn{ background:var(--info) } .deselect-btn{ background:var(--danger) } .apply-btn{ background:var(--primary) }
-    .insert-btn{ background:#ff5722 }
+    .insert-btn{ background:#ff5722 } .subject-btn{ background:#9c27b0 }
+    .encode-btn{ background:#2196f3 } .decode-btn{ background:#4caf50 }
 
     .flex-2col{ display:flex; gap:18px; align-items:flex-start }
     .col{ flex:1; min-width:0 }
 
     .headers-box{
       margin: 10px 0 0; padding: 12px; border-radius:10px; background:#f8f9fa; border:1px solid var(--border);
-      max-height:200px; overflow:auto
+      max-height:200px; overflow:auto; transition: background 0.3s, border-color 0.3s;
     }
     .headers-box label{ display:inline-block; margin:0 12px 8px 0 }
 
@@ -51,29 +54,29 @@
     .options textarea{ width:90%; height:120px }
 
     /* Always select */
-    .always-box{ margin:10px 0; padding:8px; background:#f1f3f5; border-radius:8px }
+    .always-box{ margin:10px 0; padding:8px; background:#f1f3f5; border-radius:8px; transition: background 0.3s; }
     .always-inner{ display:flex; gap:8px; align-items:center; margin-top:5px }
-    #alwaysSelect{ flex:1; padding:8px; border:2px solid var(--brand); border-radius:8px }
-    #applySelectBtn,#resetDefaultBtn{ padding:8px 12px; background:#6c757d; color:#fff; border:none; border-radius:8px; cursor:pointer }
+    #alwaysSelect{ flex:1; padding:8px; border:2px solid var(--brand); border-radius:8px; transition: background 0.3s, border-color 0.3s, color 0.3s; }
+    #applySelectBtn,#resetDefaultBtn{ padding:8px 12px; background:#6c757d; color:#fff; border:none; border-radius:88px; cursor:pointer; transition: background 0.3s; }
     #applySelectBtn:hover,#resetDefaultBtn:hover{ background:#5a6268 }
 
     /* LIVE PREVIEW AREA */
     .viewer-bar{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin:16px 0 }
     .viewer-toggles{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
-    .toggle{ position:relative; display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden }
-    .toggle button{ background:#fff; color:#495057; border:none; padding:8px 14px; cursor:pointer }
+    .toggle{ position:relative; display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; transition: border-color 0.3s; }
+    .toggle button{ background:#fff; color:#495057; border:none; padding:8px 14px; cursor:pointer; transition: background 0.3s, color 0.3s; }
     .toggle button.active{ background:var(--brand); color:#fff }
-    .live-check{ user-select:none; font-size:13px; color:#495057 }
+    .live-check{ user-select:none; font-size:13px; color:#495057; transition: color 0.3s; }
 
-    .preview-wrap{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; box-shadow: inset 0 1px 0 rgba(0,0,0,.03) }
+    .preview-wrap{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; box-shadow: inset 0 1px 0 rgba(0,0,0,.03); transition: border-color 0.3s, background 0.3s; }
     .split{ display:flex; gap:16px }
     .split .pane{ flex:1; min-width:0 }
 
     /* Gmail-ish chrome */
-    .gmail-chrome{ background:#f6f8fc; border-bottom:1px solid #e5e7eb; padding:10px 14px; display:flex; gap:10px; align-items:center }
-    .chip{ font-size:12px; background:#e9eefc; color:#3f51b5; padding:4px 8px; border-radius:999px }
-    .gmail-body{ padding:24px; background:#fff; min-height:420px }
-    iframe#gmailFrame{ width:100%; height:480px; border:0; background:#fff }
+    .gmail-chrome{ background:#f6f8fc; border-bottom:1px solid #e5e7eb; padding:10px 14px; display:flex; gap:10px; align-items:center; transition: background 0.3s, border-color 0.3s; }
+    .chip{ font-size:12px; background:#e9eefc; color:#3f51b5; padding:4px 8px; border-radius:999px; transition: background 0.3s, color 0.3s; }
+    .gmail-body{ padding:24px; background:#fff; min-height:420px; transition: background 0.3s; }
+    iframe#gmailFrame{ width:100%; height:480px; border:0; background:#fff; transition: background 0.3s; }
 
     /* Source code look */
     .code-view{ margin:0; padding:14px; height:480px; overflow:auto; background:#0b1020; color:#e6edf3; font-size:12px; line-height:1.4 }
@@ -81,92 +84,351 @@
     .code-view code span{ display:block; white-space:pre; font-family:inherit }
     .code-view code span:before{ counter-increment: ln; content: counter(ln); display:inline-block; width:2.5em; margin-right:.75em; color:#6e7681 }
 
+    /* Dark mode toggle */
+    .dark-mode-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 60px;
+      height: 30px;
+      border-radius: 15px;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 100;
+    }
+    .dark-mode-toggle:before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    .dark-mode-toggle.active {
+      background: var(--brand);
+    }
+    .dark-mode-toggle.active:before {
+      transform: translateX(30px);
+    }
+    .dark-mode-toggle .tooltip {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .dark-mode-toggle:hover .tooltip {
+      opacity: 1;
+    }
+
+    /* Tab navigation */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      background: #f1f3f5;
+      border-radius: 8px 8px 0 0;
+      margin-right: 4px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .tab.active {
+      background: var(--brand);
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Encoding options */
+    .encoding-options {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    .encoding-options label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: normal;
+    }
+
+    /* Action status indicators */
+    .action-status {
+      font-size: 12px;
+      color: #28a745;
+      margin-top: 5px;
+      display: none;
+    }
+    .action-status.error {
+      color: #dc3545;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background: linear-gradient(135deg, var(--dark-bg1), var(--dark-bg2));
+      color: var(--dark-text);
+    }
+    body.dark-mode .container {
+      background: var(--dark-panel);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    }
+    body.dark-mode h3,
+    body.dark-mode label {
+      color: var(--dark-text);
+    }
+    body.dark-mode textarea,
+    body.dark-mode input[type=text] {
+      background: #2d3748;
+      color: var(--dark-text);
+      border-color: #6f42c1;
+    }
+    body.dark-mode .headers-box {
+      background: #2d3748;
+      border-color: var(--dark-border);
+    }
+    body.dark-mode .always-box {
+      background: #2d3748;
+    }
+    body.dark-mode #alwaysSelect {
+      background: #4a5568;
+      color: var(--dark-text);
+      border-color: #6f42c1;
+    }
+    body.dark-mode .toggle {
+      border-color: var(--dark-border);
+    }
+    body.dark-mode .toggle button {
+      background: #4a5568;
+      color: var(--dark-text);
+    }
+    body.dark-mode .live-check {
+      color: var(--dark-text);
+    }
+    body.dark-mode .preview-wrap {
+      border-color: var(--dark-border);
+      background: #2d3748;
+    }
+    body.dark-mode .gmail-chrome {
+      background: #2d3748;
+      border-color: var(--dark-border);
+    }
+    body.dark-mode .chip {
+      background: #4a5568;
+      color: #a3bffa;
+    }
+    body.dark-mode .gmail-body {
+      background: #4a5568;
+    }
+    body.dark-mode iframe#gmailFrame {
+      background: #4a5568;
+    }
+    body.dark-mode .tabs {
+      border-color: var(--dark-border);
+    }
+    body.dark-mode .tab {
+      background: #2d3748;
+      color: var(--dark-text);
+    }
+    body.dark-mode .tab.active {
+      background: var(--brand);
+      color: white;
+    }
+
     @media (max-width: 1024px){ .flex-2col{ flex-direction:column } }
   </style>
 </head>
 <body>
+  <!-- Dark Mode Toggle -->
+  <div class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+    <div class="tooltip">Toggle Dark Mode</div>
+  </div>
+
   <div class="container">
     <div style="font-size:13px;color:black;margin-bottom:8px">YOUSSEF DERRAZ CMH8</div>
-    <h2>NEWSLITTER Cleaner</h2>
+    <h2>NEWSLITTER Cleaner & Encoder/Decoder</h2>
 
-    <div class="flex-2col">
-      <!-- LEFT: Editor & Tools -->
-      <div class="col">
-        <label for="input">Paste NEWSLITTER:</label>
-        <textarea id="input" placeholder="Paste header here..."></textarea>
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <div class="tab active" data-tab="email-cleaner">Email Cleaner</div>
+      <div class="tab" data-tab="encoder-decoder">Encoder/Decoder</div>
+    </div>
 
-        <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none"/>
-        <div class="buttons">
-          <button class="btn import-btn" id="importBtn">Import</button>
-          <button class="btn clean-btn" id="cleanBtn">Clean</button>
-          <button class="btn export-btn" id="exportBtn">Export</button>
-          <button class="btn clear-btn" id="clearBtn">Clear</button>
-          <button class="btn deselect-btn" id="deselectBtn">Deselect All</button>
+    <!-- Email Cleaner Tab -->
+    <div class="tab-content active" id="email-cleaner">
+      <div class="flex-2col">
+        <!-- LEFT: Editor & Tools -->
+        <div class="col">
+          <label for="input">Paste NEWSLITTER:</label>
+          <textarea id="input" placeholder="Paste header here...">From: Restaurant Ordering System <help@newslitters.com>
+Subject: Test Email
+Date: Wed, 15 Nov 2023 10:30:00 +0000
+To: recipient@example.com
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Test Email&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;This is a test email content.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+
+          <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none"/>
+          <div class="buttons">
+            <button class="btn import-btn" id="importBtn">Import</button>
+            <button class="btn clean-btn" id="cleanBtn">Clean</button>
+            <button class="btn export-btn" id="exportBtn">Export</button>
+            <button class="btn clear-btn" id="clearBtn">Clear</button>
+            <button class="btn deselect-btn" id="deselectBtn">Deselect All</button>
+          </div>
+
+          <h3>Choose PARAMS to remove:</h3>
+          <div class="always-box">
+            <label><b>(separated by comma):</b></label>
+            <div class="always-inner">
+              <input type="text" id="alwaysSelect" />
+              <button type="button" id="applySelectBtn">✔️ Select</button>
+              <button type="button" id="resetDefaultBtn"> Reset Default</button>
+            </div>
+          </div>
+          <div id="headersBox" class="headers-box">
+            <p style="color:#666">👉 Paste or Import a header to see available fields...</p>
+          </div>
+
+          <div class="options">
+            <label>Custom From Name:</label>
+            <input type="text" id="customName" placeholder="FROM NAME" value="Custom Sender" />
+            <div style="margin:6px 0 10px">
+              <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label>
+              <div id="rdnsStatus" class="action-status">Already applied</div>
+              
+              <label><input type="checkbox" id="toggleRpath"/> Replace domain with [P_RPATH]</label>
+              <div id="rpathStatus" class="action-status">Already applied</div>
+              
+              <label><input type="checkbox" id="toggleEid"/> Add [eid] in Message-ID</label>
+              <div id="eidStatus" class="action-status">Already applied</div>
+              
+              <label><input type="checkbox" id="toggleIp"/> Toggle [ip] before DOCTYPE/HTML/IMG</label>
+              <div id="ipStatus" class="action-status">Already applied</div>
+              
+              <label><input type="checkbox" id="toggleHead"/> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
+              <div id="headStatus" class="action-status">Already applied</div>
+            </div>
+            <button class="btn apply-btn" id="applyBtn">Apply</button>
+          </div>
+
+          <!-- Custom Subject Input -->
+          <div class="options">
+            <label>Custom Subject:</label>
+            <input type="text" id="customSubject" placeholder="Enter custom subject..." />
+            <button class="btn subject-btn" id="subjectBtn">Apply Subject</button>
+            <div id="subjectStatus" class="action-status">Already applied</div>
+          </div>
+
+          <div class="options">
+            <label>Insert HTML:</label>
+            <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;&lt;select&gt;..."></textarea><br/>
+            <button class="btn insert-btn" id="insertBtn">Insert HTML</button>
+            <div id="insertStatus" class="action-status">Already applied</div>
+          </div>
+
+          <h3>Cleaned STR:</h3>
+          <textarea id="output" placeholder="Result will appear here..."></textarea>
         </div>
 
-        <h3>Choose PARAMS to remove:</h3>
-        <div class="always-box">
-          <label><b>(separated bb virgule):</b></label>
-          <div class="always-inner">
-            <input type="text" id="alwaysSelect" />
-            <button type="button" id="applySelectBtn">✔️ Select</button>
-            <button type="button" id="resetDefaultBtn"> Reset Default</button>
+        <!-- RIGHT: Live Preview -->
+        <div class="col">
+          <div class="viewer-bar">
+            <div class="viewer-toggles">
+              <div class="toggle" role="tablist" aria-label="Viewer mode">
+                <button id="btnGmail" class="active" role="tab" aria-selected="true">📩 Gmail View</button>
+                <button id="btnSource" role="tab" aria-selected="false"></> Source View</button>
+              </div>
+              <span class="chip">Live</span>
+            </div>
+            <label class="live-check"><input type="checkbox" id="liveToggle" checked /> Update while typing</label>
+          </div>
+
+          <div class="preview-wrap">
+            <!-- Gmail-like preview -->
+            <div id="gmailPreview" style="display:block">
+              <div class="gmail-chrome">
+                <span class="chip">Inbox</span>
+                <span style="font-weight:600">Preview</span>
+                <span style="margin-left:auto; font-size:12px; color:#7a7a7a">(Mock Gmail UI)</span>
+              </div>
+              <div class="gmail-body">
+                <iframe id="gmailFrame" title="Gmail-like preview"></iframe>
+              </div>
+            </div>
+            <!-- Raw source pretty view -->
+            <pre id="sourceView" class="code-view" style="display:none"><code id="codeBlock"></code></pre>
           </div>
         </div>
-        <div id="headersBox" class="headers-box">
-          <p style="color:#666">👉 Paste or Import a header to see available fields...</p>
-        </div>
-
-        <div class="options">
-          <label>Custom From Name:</label>
-          <input type="text" id="customName" placeholder="FROM NAME" />
-          <div style="margin:6px 0 10px">
-            <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label><br/>
-            <label><input type="checkbox" id="toggleRpath"/> Replace domain with [P_RPATH]</label><br/>
-            <label><input type="checkbox" id="toggleEid"/> Add [eid] in Message-ID</label><br/>
-            <label><input type="checkbox" id="toggleIp"/> Toggle [ip] before DOCTYPE/HTML/IMG</label><br/>
-            <label><input type="checkbox" id="toggleHead"/> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
-          </div>
-          <button class="btn apply-btn" id="applyBtn">Apply</button>
-        </div>
-
-        <div class="options">
-          <label>Insert HTML:</label>
-          <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;..."></textarea><br/>
-          <button class="btn insert-btn" id="insertBtn">Insert HTML</button>
-        </div>
-
-        <h3>Cleaned STR:</h3>
-        <textarea id="output" placeholder="Result will appear here..."></textarea>
       </div>
+    </div>
 
-      <!-- RIGHT: Live Preview -->
-      <div class="col">
-        <div class="viewer-bar">
-          <div class="viewer-toggles">
-            <div class="toggle" role="tablist" aria-label="Viewer mode">
-              <button id="btnGmail" class="active" role="tab" aria-selected="true">📩 Gmail View</button>
-              <button id="btnSource" role="tab" aria-selected="false"></> Source View</button>
-            </div>
-            <span class="chip">Live</span>
+    <!-- Encoder/Decoder Tab -->
+    <div class="tab-content" id="encoder-decoder">
+      <div class="flex-2col">
+        <div class="col">
+          <h3>Encode/Decode Text</h3>
+          <label for="encodeInput">Input Text:</label>
+          <textarea id="encodeInput" placeholder="Enter text to encode or decode..."></textarea>
+          
+          <div class="encoding-options">
+            <label><input type="radio" name="encodingType" value="base64" checked> Base64</label>
+            <label><input type="radio" name="encodingType" value="url"> URL Encoding</label>
+            <label><input type="radio" name="encodingType" value="html"> HTML Entities</label>
+            <label><input type="radio" name="encodingType" value="hex"> Hex</label>
           </div>
-          <label class="live-check"><input type="checkbox" id="liveToggle" checked /> Update while typing</label>
+          
+          <div class="buttons">
+            <button class="btn encode-btn" id="encodeBtn">Encode</button>
+            <button class="btn decode-btn" id="decodeBtn">Decode</button>
+            <button class="btn clear-btn" id="clearEncodeBtn">Clear</button>
+          </div>
+          
+          <h3>Result:</h3>
+          <textarea id="encodeOutput" placeholder="Result will appear here..."></textarea>
         </div>
-
-        <div class="preview-wrap">
-          <!-- Gmail-like preview -->
-          <div id="gmailPreview" style="display:block">
-            <div class="gmail-chrome">
-              <span class="chip">Inbox</span>
-              <span style="font-weight:600">Preview</span>
-              <span style="margin-left:auto; font-size:12px; color:#7a7a7a">(Mock Gmail UI)</span>
-            </div>
-            <div class="gmail-body">
-              <iframe id="gmailFrame" title="Gmail-like preview"></iframe>
-            </div>
+        
+        <div class="col">
+          <h3>About Encoding Types</h3>
+          <div class="headers-box">
+            <p><strong>Base64 Encoding:</strong> Converts binary data into ASCII characters. Commonly used for email attachments and data URLs.</p>
+            <p><strong>URL Encoding:</strong> Replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.</p>
+            <p><strong>HTML Entities:</strong> Replaces reserved HTML characters with entity names or numbers to prevent parsing issues.</p>
+            <p><strong>Hex Encoding:</strong> Represents data with hexadecimal values (0-9, A-F).</p>
           </div>
-          <!-- Raw source pretty view -->
-          <pre id="sourceView" class="code-view" style="display:none"><code id="codeBlock"></code></pre>
+          
+          <h3>Quick Actions</h3>
+          <div class="buttons">
+            <button class="btn import-btn" id="copyEncodeBtn">Copy Result</button>
+            <button class="btn export-btn" id="swapEncodeBtn">Swap Input/Output</button>
+          </div>
         </div>
       </div>
     </div>
@@ -188,13 +450,17 @@
     const customNameInput = document.getElementById('customName');
     const insertTextInput = document.getElementById('insertText');
 
+    // Subject customization refs
+    const customSubjectInput = document.getElementById('customSubject');
+    const subjectBtn = document.getElementById('subjectBtn');
+
     // Always select
     const alwaysSelectInput = document.getElementById("alwaysSelect");
     const applySelectBtn = document.getElementById("applySelectBtn");
     const resetDefaultBtn = document.getElementById("resetDefaultBtn");
     const defaultHeaders = "ARC-Authentication-Results, ARC-Message-Signature, ARC-Seal, Authentication-Results, DKIM-Signature, Received-SPF, Return-Path, X-Google-Smtp-Source, sender, Delivered-To";
 
-    // ====== NEW: Live preview refs ======
+    // ====== Live preview refs ======
     const btnGmail = document.getElementById('btnGmail');
     const btnSource = document.getElementById('btnSource');
     const gmailPreview = document.getElementById('gmailPreview');
@@ -203,6 +469,60 @@
     const gmailFrame = document.getElementById('gmailFrame');
     const liveToggle = document.getElementById('liveToggle');
 
+    // ====== Dark mode toggle ======
+    const darkModeToggle = document.getElementById('darkModeToggle');
+
+    // ====== Encoding/Decoding refs ======
+    const encodeInput = document.getElementById('encodeInput');
+    const encodeOutput = document.getElementById('encodeOutput');
+    const encodeBtn = document.getElementById('encodeBtn');
+    const decodeBtn = document.getElementById('decodeBtn');
+    const clearEncodeBtn = document.getElementById('clearEncodeBtn');
+    const copyEncodeBtn = document.getElementById('copyEncodeBtn');
+    const swapEncodeBtn = document.getElementById('swapEncodeBtn');
+    const encodingTypeRadios = document.querySelectorAll('input[name="encodingType"]');
+
+    // ====== Action status indicators ======
+    const rdnsStatus = document.getElementById('rdnsStatus');
+    const rpathStatus = document.getElementById('rpathStatus');
+    const eidStatus = document.getElementById('eidStatus');
+    const ipStatus = document.getElementById('ipStatus');
+    const headStatus = document.getElementById('headStatus');
+    const subjectStatus = document.getElementById('subjectStatus');
+    const insertStatus = document.getElementById('insertStatus');
+
+    // ====== Tab functionality ======
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        
+        // Deactivate all tabs and contents
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        // Activate the clicked tab and content
+        tab.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // Track which actions have been applied
+    let actionsApplied = {
+      rdns: false,
+      rpath: false,
+      eid: false,
+      ip: false,
+      head: false,
+      subject: false,
+      insert: false
+    };
+
+    // Track original content to detect changes
+    let originalContent = '';
+
     // File import
     importBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', async (evt) => {
@@ -210,10 +530,55 @@
       if (!file) return;
       inputArea.value = await file.text();
       fileInput.value = '';
+      originalContent = inputArea.value;
+      resetAllActions();
       buildHeaderCheckboxes();
       maybeUpdatePreview();
     });
-    inputArea.addEventListener('input', () => { buildHeaderCheckboxes(); maybeUpdatePreview(); });
+    
+    inputArea.addEventListener('input', () => { 
+      // Check if content has significantly changed
+      if (inputArea.value !== originalContent) {
+        resetAllActions();
+        originalContent = inputArea.value;
+      }
+      buildHeaderCheckboxes(); 
+      maybeUpdatePreview(); 
+    });
+
+    // Clear button resets all actions
+    clearBtn.addEventListener('click', () => {
+      inputArea.value = ""; 
+      outputArea.value = "";
+      originalContent = '';
+      resetAllActions();
+      headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>";
+      maybeUpdatePreview();
+    });
+
+    function resetAllActions() {
+      // Reset all action trackers
+      actionsApplied = {
+        rdns: false,
+        rpath: false,
+        eid: false,
+        ip: false,
+        head: false,
+        subject: false,
+        insert: false
+      };
+      
+      // Hide all status indicators
+      const statusElements = document.querySelectorAll('.action-status');
+      statusElements.forEach(el => el.style.display = 'none');
+      
+      // Uncheck all checkboxes
+      document.getElementById('toggleRdns').checked = false;
+      document.getElementById('toggleRpath').checked = false;
+      document.getElementById('toggleEid').checked = false;
+      document.getElementById('toggleIp').checked = false;
+      document.getElementById('toggleHead').checked = false;
+    }
 
     function buildHeaderCheckboxes() {
       const text = inputArea.value;
@@ -246,6 +611,8 @@
       text = text.replace(/^X-Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
       text = text.replace(/^\s*[\r\n]/gm, "");
       outputArea.value = text.trim();
+      // Reset actions after cleaning as content has changed
+      resetAllActions();
     }
     cleanBtn.addEventListener('click', () => { cleanHeader(); maybeUpdatePreview(); });
 
@@ -259,12 +626,6 @@
       link.click();
     });
 
-    clearBtn.addEventListener('click', () => {
-      inputArea.value = ""; outputArea.value = "";
-      headersBox.innerHTML = "<p style='color:#666'>👉 Paste or Import a header to see available fields...</p>";
-      maybeUpdatePreview();
-    });
-
     deselectBtn.addEventListener('click', () => {
       const checks = headersBox.querySelectorAll("input[type=checkbox]");
       checks.forEach(chk => chk.checked = false);
@@ -276,60 +637,136 @@
       if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
 
       const custom = customNameInput.value.trim();
+      let changed = false;
 
-      // RDNS
-      if (document.getElementById("toggleRdns").checked) {
-        text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
-          const newDisp = custom || disp || "";
-          return `From: ${newDisp ? newDisp + " " : ""}<${user}@[RDNS]>`;
+      // RDNS - Fixed to properly replace the domain after @
+      if (document.getElementById("toggleRdns").checked && !actionsApplied.rdns) {
+        // Handle email format with angle brackets: From: Display Name <name@domain.com>
+        text = text.replace(/^From:\s*(.*?)\s*<([^@>]+)@([^>]+)>/gmi, (match, displayName, username, domain) => {
+          const newDisp = custom || displayName.trim();
+          return `From: ${newDisp} <${username}@[RDNS]>`;
         });
+        
+        // Also handle simple email format without angle brackets: From: name@domain.com
+        text = text.replace(/^From:\s*([^@\s]+)@([^\s>]+)/gmi, (match, username, domain) => {
+          const newDisp = custom || '';
+          return `From: ${newDisp}${newDisp ? ' ' : ''}<${username}@[RDNS]>`;
+        });
+        
+        actionsApplied.rdns = true;
+        rdnsStatus.style.display = 'block';
+        changed = true;
       }
 
-      // RPATH
-      if (document.getElementById("toggleRpath").checked) {
-        text = text.replace(/^From:\s*(?:(.*?)\s*)?<([^@<\s]+)@([^\s>]+)>/gmi, (m, disp, user, domain) => {
-          const newDisp = custom || disp || "";
-          return `From: ${newDisp ? newDisp + " " : ""}<${user}@[P_RPATH]>`;
+      // RPATH - Fixed to properly replace the domain after @
+      if (document.getElementById("toggleRpath").checked && !actionsApplied.rpath) {
+        // Handle email format with angle brackets: From: Display Name <name@domain.com>
+        text = text.replace(/^From:\s*(.*?)\s*<([^@>]+)@([^>]+)>/gmi, (match, displayName, username, domain) => {
+          const newDisp = custom || displayName.trim();
+          return `From: ${newDisp} <${username}@[P_RPATH]>`;
         });
+        
+        // Also handle simple email format without angle brackets: From: name@domain.com
+        text = text.replace(/^From:\s*([^@\s]+)@([^\s>]+)/gmi, (match, username, domain) => {
+          const newDisp = custom || '';
+          return `From: ${newDisp}${newDisp ? ' ' : ''}<${username}@[P_RPATH]>`;
+        });
+        
+        actionsApplied.rpath = true;
+        rpathStatus.style.display = 'block';
+        changed = true;
       }
 
       // Message-ID eid
-      if (document.getElementById("toggleEid").checked) {
+      if (document.getElementById("toggleEid").checked && !actionsApplied.eid) {
         text = text.replace(/^Message-ID:\s*<([^@>]+)@([^>]+)>/gmi, "Message-ID: <$1[eid]@$2>");
+        actionsApplied.eid = true;
+        eidStatus.style.display = 'block';
+        changed = true;
       }
 
       // Toggle [ip]
-      if (document.getElementById("toggleIp").checked) {
+      if (document.getElementById("toggleIp").checked && !actionsApplied.ip) {
         if (!text.includes("[ip]")) {
           text = text.replace(/(<!DOCTYPE|<html|<img)/i, "\n[ip]\n$1");
+          actionsApplied.ip = true;
+          ipStatus.style.display = 'block';
+          changed = true;
         }
-      } else {
-        text = text.replace(/\s*\[ip\]\s*/gi, "");
       }
 
       // Add <head><select>
-      if (document.getElementById("toggleHead").checked) {
+      if (document.getElementById("toggleHead").checked && !actionsApplied.head) {
         if (!text.includes("<head><select>")) {
           text = text.replace(/(<!DOCTYPE[^>]*>)/i, "$1\n<head><select>");
+          actionsApplied.head = true;
+          headStatus.style.display = 'block';
+          changed = true;
         }
-      } else {
-        text = text.replace(/<head><select>/gi, "");
       }
 
-      outputArea.value = text.trim();
+      if (changed) {
+        outputArea.value = text.trim();
+        maybeUpdatePreview();
+      } else if (!changed) {
+        alert("No new transformations applied. These actions may have already been applied to this content.");
+      }
     }
-    applyBtn.addEventListener('click', () => { applyTransformations(); maybeUpdatePreview(); });
+    applyBtn.addEventListener('click', applyTransformations);
+
+    // Apply custom subject
+    function applyCustomSubject() {
+      let text = outputArea.value || inputArea.value;
+      if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
+      
+      const customSubject = customSubjectInput.value.trim();
+      if (!customSubject) { alert("Please enter a custom subject."); return; }
+      
+      if (actionsApplied.subject) {
+        alert("Subject has already been applied to this content.");
+        return;
+      }
+      
+      // Replace existing Subject header
+      if (text.includes("Subject:")) {
+        text = text.replace(/^Subject:.*$/gmi, `Subject: ${customSubject}`);
+      } else {
+        // If no Subject header exists, add one at the top
+        text = `Subject: ${customSubject}\n${text}`;
+      }
+      
+      outputArea.value = text;
+      actionsApplied.subject = true;
+      subjectStatus.style.display = 'block';
+      maybeUpdatePreview();
+    }
+    subjectBtn.addEventListener('click', applyCustomSubject);
 
     // Insert custom text above <head><select>
-    insertBtn.addEventListener('click', () => {
+    function insertCustomHtml() {
       let text = outputArea.value || inputArea.value;
       if (!text.trim()) { alert("Paste, import, or clean a header first."); return; }
       const customText = insertTextInput.value;
       if (!customText.trim()) { alert("Write something first."); return; }
-      text = text.replace(/(<head><select>)/i, "\n" + customText + "\n$1");
-      outputArea.value = text;
-      maybeUpdatePreview();
-    });
+      
+      if (actionsApplied.insert) {
+        alert("HTML has already been inserted into this content.");
+        return;
+      }
+      
+      // More robust search for <head><select> pattern
+      const headSelectPattern = /(<head>\s*<select>)/i;
+      if (headSelectPattern.test(text)) {
+        text = text.replace(headSelectPattern, "\n" + customText + "\n$1");
+        outputArea.value = text;
+        actionsApplied.insert = true;
+        insertStatus.style.display = 'block';
+        maybeUpdatePreview();
+      } else {
+        alert("No <head><select> tag found in the content. Please apply the 'Add <head><select>' option first.");
+      }
+    }
+    insertBtn.addEventListener('click', insertCustomHtml);
 
     // Always select functions
     function applyAlwaysSelect() {
@@ -345,13 +782,20 @@
       alwaysSelectInput.value = saved || defaultHeaders;
       // initial preview
       maybeUpdatePreview();
+      
+      // Check for saved dark mode preference
+      const darkMode = localStorage.getItem("darkMode") === "true";
+      if (darkMode) {
+        document.body.classList.add("dark-mode");
+        darkModeToggle.classList.add("active");
+      }
     });
     applySelectBtn.addEventListener("click", () => { applyAlwaysSelect(); });
     resetDefaultBtn.addEventListener("click", () => {
       alwaysSelectInput.value = defaultHeaders; applyAlwaysSelect(); localStorage.setItem("alwaysSelectParams", defaultHeaders);
     });
 
-    // ====== NEW: Live preview logic ======
+    // ====== Live preview logic ======
     function getWorkingText(){
       const out = outputArea.value.trim();
       const inp = inputArea.value.trim();
@@ -403,6 +847,137 @@
       gmailPreview.style.display='none';
       sourceView.style.display='block';
     });
+
+    // ====== Dark mode functionality ======
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      darkModeToggle.classList.toggle('active');
+      
+      // Save preference to localStorage
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+    });
+
+    // ====== Encoding/Decoding functionality ======
+    function getSelectedEncodingType() {
+      for (const radio of encodingTypeRadios) {
+        if (radio.checked) return radio.value;
+      }
+      return 'base64'; // default
+    }
+
+    function encodeText() {
+      const text = encodeInput.value.trim();
+      if (!text) {
+        alert("Please enter some text to encode.");
+        return;
+      }
+      
+      const encodingType = getSelectedEncodingType();
+      let result;
+      
+      try {
+        switch(encodingType) {
+          case 'base64':
+            result = btoa(unescape(encodeURIComponent(text)));
+            break;
+          case 'url':
+            result = encodeURIComponent(text);
+            break;
+          case 'html':
+            result = text.replace(/[&<>"']/g, m => ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;'
+            }[m]));
+            break;
+          case 'hex':
+            result = Array.from(text).map(c => 
+              c.charCodeAt(0).toString(16).padStart(2, '0')
+            ).join(' ');
+            break;
+          default:
+            result = "Unsupported encoding type";
+        }
+        
+        encodeOutput.value = result;
+      } catch (e) {
+        encodeOutput.value = "Error: " + e.message;
+      }
+    }
+
+    function decodeText() {
+      const text = encodeInput.value.trim();
+      if (!text) {
+        alert("Please enter some text to decode.");
+        return;
+      }
+      
+      const encodingType = getSelectedEncodingType();
+      let result;
+      
+      try {
+        switch(encodingType) {
+          case 'base64':
+            result = decodeURIComponent(escape(atob(text)));
+            break;
+          case 'url':
+            result = decodeURIComponent(text);
+            break;
+          case 'html':
+            result = text.replace(/&amp;/g, '&')
+                         .replace(/&lt;/g, '<')
+                         .replace(/&gt;/g, '>')
+                         .replace(/&quot;/g, '"')
+                         .replace(/&#39;/g, "'");
+            break;
+          case 'hex':
+            result = text.split(' ').map(hex => 
+              String.fromCharCode(parseInt(hex, 16))
+            ).join('');
+            break;
+          default:
+            result = "Unsupported encoding type";
+        }
+        
+        encodeOutput.value = result;
+      } catch (e) {
+        encodeOutput.value = "Error: " + e.message;
+      }
+    }
+
+    function copyEncodeResult() {
+      if (!encodeOutput.value.trim()) {
+        alert("No result to copy.");
+        return;
+      }
+      
+      encodeOutput.select();
+      document.execCommand('copy');
+      alert("Copied to clipboard!");
+    }
+
+    function swapEncodeText() {
+      const temp = encodeInput.value;
+      encodeInput.value = encodeOutput.value;
+      encodeOutput.value = temp;
+    }
+
+    // Add event listeners for encoding/decoding
+    encodeBtn.addEventListener('click', encodeText);
+    decodeBtn.addEventListener('click', decodeText);
+    clearEncodeBtn.addEventListener('click', () => {
+      encodeInput.value = '';
+      encodeOutput.value = '';
+    });
+    copyEncodeBtn.addEventListener('click', copyEncodeResult);
+    swapEncodeBtn.addEventListener('click', swapEncodeText);
+
+    // Initialize the page
+    buildHeaderCheckboxes();
+    maybeUpdatePreview();
   </script>
 </body>
 </html>
