@@ -319,7 +319,7 @@ To: recipient@example.com
 
           <div class="options">
             <label>Custom From Name:</label>
-            <input type="text" id="customName" placeholder="FROM NAME" value="Custom Sender" />
+            <input type="text" id="customName" placeholder="FROM NAME (leave empty to keep original)" value="" />
             <div style="margin:6px 0 10px">
               <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label>
               <div id="rdnsStatus" class="action-status">Already applied</div>
@@ -639,18 +639,20 @@ To: recipient@example.com
       const custom = customNameInput.value.trim();
       let changed = false;
 
-      // RDNS - Fixed to properly replace the domain after @
+      // RDNS - Only apply custom name if one was explicitly provided
       if (document.getElementById("toggleRdns").checked && !actionsApplied.rdns) {
         // Handle email format with angle brackets: From: Display Name <name@domain.com>
         text = text.replace(/^From:\s*(.*?)\s*<([^@>]+)@([^>]+)>/gmi, (match, displayName, username, domain) => {
-          const newDisp = custom || displayName.trim();
+          // Only use custom name if it was explicitly provided
+          const newDisp = custom ? custom : displayName.trim();
           return `From: ${newDisp} <${username}@[RDNS]>`;
         });
         
         // Also handle simple email format without angle brackets: From: name@domain.com
         text = text.replace(/^From:\s*([^@\s]+)@([^\s>]+)/gmi, (match, username, domain) => {
-          const newDisp = custom || '';
-          return `From: ${newDisp}${newDisp ? ' ' : ''}<${username}@[RDNS]>`;
+          // Only add custom name if it was explicitly provided
+          const newDisp = custom ? custom + ' ' : '';
+          return `From: ${newDisp}<${username}@[RDNS]>`;
         });
         
         actionsApplied.rdns = true;
@@ -658,18 +660,20 @@ To: recipient@example.com
         changed = true;
       }
 
-      // RPATH - Fixed to properly replace the domain after @
+      // RPATH - Only apply custom name if one was explicitly provided
       if (document.getElementById("toggleRpath").checked && !actionsApplied.rpath) {
         // Handle email format with angle brackets: From: Display Name <name@domain.com>
         text = text.replace(/^From:\s*(.*?)\s*<([^@>]+)@([^>]+)>/gmi, (match, displayName, username, domain) => {
-          const newDisp = custom || displayName.trim();
+          // Only use custom name if it was explicitly provided
+          const newDisp = custom ? custom : displayName.trim();
           return `From: ${newDisp} <${username}@[P_RPATH]>`;
         });
         
         // Also handle simple email format without angle brackets: From: name@domain.com
         text = text.replace(/^From:\s*([^@\s]+)@([^\s>]+)/gmi, (match, username, domain) => {
-          const newDisp = custom || '';
-          return `From: ${newDisp}${newDisp ? ' ' : ''}<${username}@[P_RPATH]>`;
+          // Only add custom name if it was explicitly provided
+          const newDisp = custom ? custom + ' ' : '';
+          return `From: ${newDisp}<${username}@[P_RPATH]>`;
         });
         
         actionsApplied.rpath = true;
@@ -934,7 +938,7 @@ To: recipient@example.com
                          .replace(/&#39;/g, "'");
             break;
           case 'hex':
-            result = text.split(' ').map(hex => 
+            result = text.split('').map(hex => 
               String.fromCharCode(parseInt(hex, 16))
             ).join('');
             break;
@@ -980,4 +984,5 @@ To: recipient@example.com
     maybeUpdatePreview();
   </script>
 </body>
+</html>
 </html>
