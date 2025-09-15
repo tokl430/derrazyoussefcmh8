@@ -10,14 +10,26 @@
       --bg1:#f8f9fa; --bg2:#e9ecef; --text:#333; --muted:#666; --border:#dee2e6; --panel:#fff;
       --dark-bg1:#1a1a2e; --dark-bg2:#16213e; --dark-text:#e6e6e6; --dark-muted:#a0a0a0; --dark-border:#2d4059; --dark-panel:#0f3460;
     }
-    *{box-sizing:border-box}
+    *{box-sizing:border-box; margin:0; padding:0;}
     body{
-      font-family:"Segoe UI", Tahoma, sans-serif; background:linear-gradient(135deg,var(--bg1),var(--bg2));
-      padding:30px; color:var(--text); transition: background 0.3s, color 0.3s;
+      font-family:"Segoe UI", Tahoma, sans-serif; 
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color:var(--text); 
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+      padding: 0;
     }
     .container{
-      max-width:1200px; margin:auto; background:var(--panel); border-radius:15px; padding:25px;
-      box-shadow:0 8px 18px rgba(0,0,0,.15); transition: background 0.3s, box-shadow 0.3s;
+      width: 100%;
+      margin: 0;
+      background:var(--panel); 
+      border-radius: 0;
+      padding: 25px;
+      transition: background 0.3s;
+    }
+    .content-wrapper {
+      max-width: 1600px;
+      margin: 0 auto;
     }
     h2{ text-align:center; color:var(--brand); margin:0 0 18px }
     h3{ color:#495057; margin:24px 0 10px; transition: color 0.3s; }
@@ -59,6 +71,19 @@
     #alwaysSelect{ flex:1; padding:8px; border:2px solid var(--brand); border-radius:8px; transition: background 0.3s, border-color 0.3s, color 0.3s; }
     #applySelectBtn,#resetDefaultBtn{ padding:8px 12px; background:#6c757d; color:#fff; border:none; border-radius:88px; cursor:pointer; transition: background 0.3s; }
     #applySelectBtn:hover,#resetDefaultBtn:hover{ background:#5a6268 }
+
+    /* Filename input for export */
+    .filename-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .filename-input input {
+      flex: 1;
+      max-width: 300px;
+      margin: 0;
+    }
 
     /* LIVE PREVIEW AREA */
     .viewer-bar{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin:16px 0 }
@@ -184,6 +209,125 @@
       color: #dc3545;
     }
 
+    /* History panel - UPDATED TO TAKE FULL BACKGROUND */
+    .history-toggle {
+      position: absolute;
+      top: 20px;
+      right: 90px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 8px 16px;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .history-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--panel);
+      z-index: 9999;
+      padding: 20px;
+      overflow-y: auto;
+      display: none;
+      transition: all 0.3s;
+    }
+    .history-panel.active {
+      display: block;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    .history-categories {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .history-category {
+      padding: 8px 16px;
+      background: #f1f3f5;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .history-category.active {
+      background: var(--brand);
+      color: white;
+    }
+    .history-items-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+    .history-item {
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8f9fa;
+    }
+    .history-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .history-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--brand);
+      font-size: 14px;
+    }
+    .history-content {
+      font-size: 12px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      margin-bottom: 8px;
+    }
+    .history-timestamp {
+      font-size: 11px;
+      color: #999;
+      text-align: right;
+    }
+    .close-history {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .clear-history {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .no-history {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
     /* Dark mode styles */
     body.dark-mode {
       background: linear-gradient(135deg, var(--dark-bg1), var(--dark-bg2));
@@ -254,8 +398,95 @@
       background: var(--brand);
       color: white;
     }
+    body.dark-mode .filename-input input {
+      background: #4a5568;
+      color: var(--dark-text);
+      border-color: #6f42c1;
+    }
+    body.dark-mode .history-panel {
+      background: var(--dark-panel);
+      color: var(--dark-text);
+    }
+    body.dark-mode .history-item {
+      background: #2d3748;
+      border-color: var(--dark-border);
+    }
+    body.dark-mode .history-item:hover {
+      background: #374151;
+    }
+    body.dark-mode .history-title {
+      color: #a3bffa;
+    }
+    body.dark-mode .history-category {
+      background: #2d3748;
+      color: var(--dark-text);
+    }
+    body.dark-mode .history-category.active {
+      background: var(--brand);
+      color: white;
+    }
 
-    @media (max-width: 1024px){ .flex-2col{ flex-direction:column } }
+    /* NEW: Layout adjustments for right-side placement */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .left-panel {
+      grid-column: 1;
+    }
+    .right-panel {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .preview-section {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .output-section {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .insert-section {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    @media (max-width: 1200px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+      .preview-section,
+      .output-section,
+      .insert-section {
+        grid-column: 1;
+      }
+      .preview-section {
+        grid-row: 2;
+      }
+      .output-section {
+        grid-row: 3;
+      }
+      .insert-section {
+        grid-row: 4;
+      }
+    }
+    @media (max-width: 1024px){ 
+      .flex-2col{ flex-direction:column } 
+      .history-items-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+    @media (max-width: 768px) {
+      .history-items-container {
+        grid-template-columns: 1fr;
+      }
+      .history-categories {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -264,23 +495,51 @@
     <div class="tooltip">Toggle Dark Mode</div>
   </div>
 
-  <div class="container">
-    <div style="font-size:13px;color:black;margin-bottom:8px">YOUSSEF DERRAZ CMH8</div>
-    <h2>NEWSLITTER Cleaner & Encoder/Decoder</h2>
+  <!-- History Toggle -->
+  <button class="history-toggle" id="historyToggle">
+    <span>📋 History</span>
+  </button>
 
-    <!-- Tab Navigation -->
-    <div class="tabs">
-      <div class="tab active" data-tab="email-cleaner">Email Cleaner</div>
-      <div class="tab" data-tab="encoder-decoder">Encoder/Decoder</div>
+  <!-- History Panel - UPDATED TO TAKE FULL BACKGROUND -->
+  <div class="history-panel" id="historyPanel">
+    <div class="history-header">
+      <h2>Activity History</h2>
+      <button class="close-history" id="closeHistory">Close</button>
     </div>
+    
+    <div class="history-categories" id="historyCategories">
+      <div class="history-category active" data-category="all">All Activities</div>
+      <div class="history-category" data-category="cleaned">Cleaned Content</div>
+      <div class="history-category" data-category="htmlInsert">HTML Inserted</div>
+      <div class="history-category" data-category="export">Exported Files</div>
+      <div class="history-category" data-category="subject">Subject Changes</div>
+    </div>
+    
+    <div class="history-items-container" id="historyItems">
+      <!-- History items will be added here dynamically -->
+    </div>
+    
+    <div class="clear-history" id="clearHistory">Clear All History</div>
+  </div>
 
-    <!-- Email Cleaner Tab -->
-    <div class="tab-content active" id="email-cleaner">
-      <div class="flex-2col">
-        <!-- LEFT: Editor & Tools -->
-        <div class="col">
-          <label for="input">Paste NEWSLITTER:</label>
-          <textarea id="input" placeholder="Paste header here...">From: Restaurant Ordering System <help@newslitters.com>
+  <div class="container">
+    <div class="content-wrapper">
+      <div style="font-size:13px;color:black;margin-bottom:8px">YOUSSEF DERRAZ CMH8</div>
+      <h2>NEWSLITTER Cleaner & Encoder/Decoder</h2>
+
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <div class="tab active" data-tab="email-cleaner">Email Cleaner</div>
+        <div class="tab" data-tab="encoder-decoder">Encoder/Decoder</div>
+      </div>
+
+      <!-- Email Cleaner Tab -->
+      <div class="tab-content active" id="email-cleaner">
+        <div class="main-layout">
+          <!-- LEFT PANEL: Editor & Tools -->
+          <div class="left-panel">
+            <label for="input">Paste NEWSLITTER:</label>
+            <textarea id="input" placeholder="Paste header here...">From: Restaurant Ordering System <help@newslitters.com>
 Subject: Test Email
 Date: Wed, 15 Nov 2023 10:30:00 +0000
 To: recipient@example.com
@@ -295,139 +554,155 @@ To: recipient@example.com
 &lt;/body&gt;
 &lt;/html&gt;</textarea>
 
-          <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none"/>
-          <div class="buttons">
-            <button class="btn import-btn" id="importBtn">Import</button>
-            <button class="btn clean-btn" id="cleanBtn">Clean</button>
-            <button class="btn export-btn" id="exportBtn">Export</button>
-            <button class="btn clear-btn" id="clearBtn">Clear</button>
-            <button class="btn deselect-btn" id="deselectBtn">Deselect All</button>
-          </div>
-
-          <h3>Choose PARAMS to remove:</h3>
-          <div class="always-box">
-            <label><b>(separated by comma):</b></label>
-            <div class="always-inner">
-              <input type="text" id="alwaysSelect" />
-              <button type="button" id="applySelectBtn">✔️ Select</button>
-              <button type="button" id="resetDefaultBtn"> Reset Default</button>
+            <input id="fileInput" type="file" accept=".txt,.eml,text/*" style="display:none"/>
+            <div class="buttons">
+              <button class="btn import-btn" id="importBtn">Import</button>
+              <button class="btn clean-btn" id="cleanBtn">Clean</button>
+              <button class="btn export-btn" id="exportBtn">Export</button>
+              <button class="btn clear-btn" id="clearBtn">Clear</button>
+              <button class="btn deselect-btn" id="deselectBtn">Deselect All</button>
             </div>
-          </div>
-          <div id="headersBox" class="headers-box">
-            <p style="color:#666">👉 Paste or Import a header to see available fields...</p>
-          </div>
-
-          <div class="options">
-            <label>Custom From Name:</label>
-            <input type="text" id="customName" placeholder="FROM NAME (leave empty to keep original)" value="" />
-            <div style="margin:6px 0 10px">
-              <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label>
-              <div id="rdnsStatus" class="action-status">Already applied</div>
-              
-              <label><input type="checkbox" id="toggleRpath"/> Replace domain with [P_RPATH]</label>
-              <div id="rpathStatus" class="action-status">Already applied</div>
-              
-              <label><input type="checkbox" id="toggleEid"/> Add [eid] in Message-ID</label>
-              <div id="eidStatus" class="action-status">Already applied</div>
-              
-              <label><input type="checkbox" id="toggleIp"/> Toggle [ip] before DOCTYPE/HTML/IMG</label>
-              <div id="ipStatus" class="action-status">Already applied</div>
-              
-              <label><input type="checkbox" id="toggleHead"/> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
-              <div id="headStatus" class="action-status">Already applied</div>
+            
+            <!-- Filename input for export -->
+            <div class="filename-input">
+              <label for="exportFilename">Export filename:</label>
+              <input type="text" id="exportFilename" placeholder="Enter filename..." value="cleaned_header.txt" />
             </div>
-            <button class="btn apply-btn" id="applyBtn">Apply</button>
-          </div>
 
-          <!-- Custom Subject Input -->
-          <div class="options">
-            <label>Custom Subject:</label>
-            <input type="text" id="customSubject" placeholder="Enter custom subject..." />
-            <button class="btn subject-btn" id="subjectBtn">Apply Subject</button>
-            <div id="subjectStatus" class="action-status">Already applied</div>
-          </div>
-
-          <div class="options">
-            <label>Insert HTML:</label>
-            <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;&lt;select&gt;..."></textarea><br/>
-            <button class="btn insert-btn" id="insertBtn">Insert HTML</button>
-            <div id="insertStatus" class="action-status">Already applied</div>
-          </div>
-
-          <h3>Cleaned STR:</h3>
-          <textarea id="output" placeholder="Result will appear here..."></textarea>
-        </div>
-
-        <!-- RIGHT: Live Preview -->
-        <div class="col">
-          <div class="viewer-bar">
-            <div class="viewer-toggles">
-              <div class="toggle" role="tablist" aria-label="Viewer mode">
-                <button id="btnGmail" class="active" role="tab" aria-selected="true">📩 Gmail View</button>
-                <button id="btnSource" role="tab" aria-selected="false"></> Source View</button>
-              </div>
-              <span class="chip">Live</span>
-            </div>
-            <label class="live-check"><input type="checkbox" id="liveToggle" checked /> Update while typing</label>
-          </div>
-
-          <div class="preview-wrap">
-            <!-- Gmail-like preview -->
-            <div id="gmailPreview" style="display:block">
-              <div class="gmail-chrome">
-                <span class="chip">Inbox</span>
-                <span style="font-weight:600">Preview</span>
-                <span style="margin-left:auto; font-size:12px; color:#7a7a7a">(Mock Gmail UI)</span>
-              </div>
-              <div class="gmail-body">
-                <iframe id="gmailFrame" title="Gmail-like preview"></iframe>
+            <h3>Choose PARAMS to remove:</h3>
+            <div class="always-box">
+              <label><b>(separated by comma):</b></label>
+              <div class="always-inner">
+                <input type="text" id="alwaysSelect" />
+                <button type="button" id="applySelectBtn">✔️ Select</button>
+                <button type="button" id="resetDefaultBtn"> Reset Default</button>
               </div>
             </div>
-            <!-- Raw source pretty view -->
-            <pre id="sourceView" class="code-view" style="display:none"><code id="codeBlock"></code></pre>
+            <div id="headersBox" class="headers-box">
+              <p style="color:#666">👉 Paste or Import a header to see available fields...</p>
+            </div>
+
+            <div class="options">
+              <label>Custom From Name:</label>
+              <input type="text" id="customName" placeholder="FROM NAME (leave empty to keep original)" value="" />
+              <div style="margin:6px 0 10px">
+                <label><input type="checkbox" id="toggleRdns"/> Replace domain with [RDNS]</label>
+                <div id="rdnsStatus" class="action-status">Already applied</div>
+                
+                <label><input type="checkbox" id="toggleRpath"/> Replace domain with [P_RPATH]</label>
+                <div id="rpathStatus" class="action-status">Already applied</div>
+                
+                <label><input type="checkbox" id="toggleEid"/> Add [eid] in Message-ID</label>
+                <div id="eidStatus" class="action-status">Already applied</div>
+                
+                <label><input type="checkbox" id="toggleIp"/> Toggle [ip] before DOCTYPE/HTML/IMG</label>
+                <div id="ipStatus" class="action-status">Already applied</div>
+                
+                <label><input type="checkbox" id="toggleHead"/> Add &lt;head&gt;&lt;select&gt; above DOCTYPE</label>
+                <div id="headStatus" class="action-status">Already applied</div>
+              </div>
+              <button class="btn apply-btn" id="applyBtn">Apply</button>
+            </div>
+
+            <!-- Custom Subject Input -->
+            <div class="options">
+              <label>Custom Subject:</label>
+              <input type="text" id="customSubject" placeholder="Enter custom subject..." />
+              <button class="btn subject-btn" id="subjectBtn">Apply Subject</button>
+              <div id="subjectStatus" class="action-status">Already applied</div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL: Preview at top, then Cleaned STR, then Insert HTML -->
+          <div class="right-panel">
+            <!-- PREVIEW SECTION: Top right -->
+            <div class="preview-section">
+              <div class="viewer-bar">
+                <div class="viewer-toggles">
+                  <div class="toggle" role="tablist" aria-label="Viewer mode">
+                    <button id="btnGmail" class="active" role="tab" aria-selected="true">📩 Gmail View</button>
+                    <button id="btnSource" role="tab" aria-selected="false"></> Source View</button>
+                  </div>
+                  <span class="chip">Live</span>
+                </div>
+                <label class="live-check"><input type="checkbox" id="liveToggle" checked /> Update while typing</label>
+              </div>
+
+              <div class="preview-wrap">
+                <!-- Gmail-like preview -->
+                <div id="gmailPreview" style="display:block">
+                  <div class="gmail-chrome">
+                    <span class="chip">Inbox</span>
+                    <span style="font-weight:600">Preview</span>
+                    <span style="margin-left:auto; font-size:12px; color:#7a7a7a">(Mock Gmail UI)</span>
+                  </div>
+                  <div class="gmail-body">
+                    <iframe id="gmailFrame" title="Gmail-like preview"></iframe>
+                  </div>
+                </div>
+                <!-- Raw source pretty view -->
+                <pre id="sourceView" class="code-view" style="display:none"><code id="codeBlock"></code></pre>
+              </div>
+            </div>
+
+            <!-- CLEANED STR SECTION: Below preview -->
+            <div class="output-section">
+              <h3>Cleaned STR:</h3>
+              <textarea id="output" placeholder="Result will appear here..."></textarea>
+            </div>
+
+            <!-- INSERT HTML SECTION: Below Cleaned STR -->
+            <div class="insert-section">
+              <div class="options">
+                <label>Insert HTML:</label>
+                <textarea id="insertText" placeholder="Enter text to insert above &lt;head&gt;&lt;select&gt;..."></textarea><br/>
+                <button class="btn insert-btn" id="insertBtn">Insert HTML</button>
+                <div id="insertStatus" class="action-status">Already applied</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Encoder/Decoder Tab -->
-    <div class="tab-content" id="encoder-decoder">
-      <div class="flex-2col">
-        <div class="col">
-          <h3>Encode/Decode Text</h3>
-          <label for="encodeInput">Input Text:</label>
-          <textarea id="encodeInput" placeholder="Enter text to encode or decode..."></textarea>
-          
-          <div class="encoding-options">
-            <label><input type="radio" name="encodingType" value="base64" checked> Base64</label>
-            <label><input type="radio" name="encodingType" value="url"> URL Encoding</label>
-            <label><input type="radio" name="encodingType" value="html"> HTML Entities</label>
-            <label><input type="radio" name="encodingType" value="hex"> Hex</label>
+      <!-- Encoder/Decoder Tab -->
+      <div class="tab-content" id="encoder-decoder">
+        <div class="flex-2col">
+          <div class="col">
+            <h3>Encode/Decode Text</h3>
+            <label for="encodeInput">Input Text:</label>
+            <textarea id="encodeInput" placeholder="Enter text to encode or decode..."></textarea>
+            
+            <div class="encoding-options">
+              <label><input type="radio" name="encodingType" value="base64" checked> Base64</label>
+              <label><input type="radio" name="encodingType" value="url"> URL Encoding</label>
+              <label><input type="radio" name="encodingType" value="html"> HTML Entities</label>
+              <label><input type="radio" name="encodingType" value="hex"> Hex</label>
+            </div>
+            
+            <div class="buttons">
+              <button class="btn encode-btn" id="encodeBtn">Encode</button>
+              <button class="btn decode-btn" id="decodeBtn">Decode</button>
+              <button class="btn clear-btn" id="clearEncodeBtn">Clear</button>
+            </div>
+            
+            <h3>Result:</h3>
+            <textarea id="encodeOutput" placeholder="Result will appear here..."></textarea>
           </div>
           
-          <div class="buttons">
-            <button class="btn encode-btn" id="encodeBtn">Encode</button>
-            <button class="btn decode-btn" id="decodeBtn">Decode</button>
-            <button class="btn clear-btn" id="clearEncodeBtn">Clear</button>
-          </div>
-          
-          <h3>Result:</h3>
-          <textarea id="encodeOutput" placeholder="Result will appear here..."></textarea>
-        </div>
-        
-        <div class="col">
-          <h3>About Encoding Types</h3>
-          <div class="headers-box">
-            <p><strong>Base64 Encoding:</strong> Converts binary data into ASCII characters. Commonly used for email attachments and data URLs.</p>
-            <p><strong>URL Encoding:</strong> Replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.</p>
-            <p><strong>HTML Entities:</strong> Replaces reserved HTML characters with entity names or numbers to prevent parsing issues.</p>
-            <p><strong>Hex Encoding:</strong> Represents data with hexadecimal values (0-9, A-F).</p>
-          </div>
-          
-          <h3>Quick Actions</h3>
-          <div class="buttons">
-            <button class="btn import-btn" id="copyEncodeBtn">Copy Result</button>
-            <button class="btn export-btn" id="swapEncodeBtn">Swap Input/Output</button>
+          <div class="col">
+            <h3>About Encoding Types</h3>
+            <div class="headers-box">
+              <p><strong>Base64 Encoding:</strong> Converts binary data into ASCII characters. Commonly used for email attachments and data URLs.</p>
+              <p><strong>URL Encoding:</strong> Replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.</p>
+              <p><strong>HTML Entities:</strong> Replaces reserved HTML characters with entity names or numbers to prevent parsing issues.</p>
+              <p><strong>Hex Encoding:</strong> Represents data with hexadecimal values (0-9, A-F).</p>
+            </div>
+            
+            <h3>Quick Actions</h3>
+            <div class="buttons">
+              <button class="btn import-btn" id="copyEncodeBtn">Copy Result</button>
+              <button class="btn export-btn" id="swapEncodeBtn">Swap Input/Output</button>
+            </div>
           </div>
         </div>
       </div>
@@ -449,6 +724,15 @@ To: recipient@example.com
     const headersBox = document.getElementById('headersBox');
     const customNameInput = document.getElementById('customName');
     const insertTextInput = document.getElementById('insertText');
+    const exportFilenameInput = document.getElementById('exportFilename');
+
+    // History elements
+    const historyToggle = document.getElementById('historyToggle');
+    const historyPanel = document.getElementById('historyPanel');
+    const historyItems = document.getElementById('historyItems');
+    const clearHistoryBtn = document.getElementById('clearHistory');
+    const closeHistoryBtn = document.getElementById('closeHistory');
+    const historyCategories = document.getElementById('historyCategories');
 
     // Subject customization refs
     const customSubjectInput = document.getElementById('customSubject');
@@ -522,6 +806,141 @@ To: recipient@example.com
 
     // Track original content to detect changes
     let originalContent = '';
+
+    // History functionality
+    let history = JSON.parse(localStorage.getItem('emailCleanerHistory')) || [];
+    let currentCategory = 'all';
+
+    function addToHistory(type, content, filename = null, subject = null) {
+      const timestamp = new Date().toLocaleString();
+      const historyItem = {
+        id: Date.now(),
+        type,
+        content,
+        filename,
+        subject,
+        timestamp
+      };
+      
+      history.unshift(historyItem);
+      
+      // Keep only the last 50 items
+      if (history.length > 50) {
+        history = history.slice(0, 50);
+      }
+      
+      localStorage.setItem('emailCleanerHistory', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyItems.innerHTML = '';
+      
+      const filteredHistory = currentCategory === 'all' 
+        ? history 
+        : history.filter(item => item.type === currentCategory);
+      
+      if (filteredHistory.length === 0) {
+        historyItems.innerHTML = '<div class="no-history">No history found for this category</div>';
+        return;
+      }
+      
+      filteredHistory.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'history-item';
+        itemEl.setAttribute('data-type', item.type);
+        
+        let title = '';
+        let contentPreview = truncateContent(item.content);
+        
+        switch(item.type) {
+          case 'cleaned':
+            title = 'Cleaned Content';
+            break;
+          case 'htmlInsert':
+            title = 'HTML Inserted';
+            break;
+          case 'export':
+            title = 'Exported File';
+            contentPreview = `Filename: ${item.filename}`;
+            break;
+          case 'subject':
+            title = 'Subject Changed';
+            contentPreview = `New subject: ${item.subject}`;
+            break;
+          default:
+            title = 'Activity';
+        }
+        
+        itemEl.innerHTML = `
+          <div class="history-title">${title}</div>
+          <div class="history-content">${contentPreview}</div>
+          <div class="history-timestamp">${item.timestamp}</div>
+        `;
+        
+        itemEl.addEventListener('click', () => {
+          if (item.type === 'cleaned') {
+            outputArea.value = item.content;
+            maybeUpdatePreview();
+          } else if (item.type === 'htmlInsert') {
+            insertTextInput.value = item.content;
+          } else if (item.type === 'export') {
+            exportFilenameInput.value = item.filename;
+          } else if (item.type === 'subject') {
+            customSubjectInput.value = item.subject;
+          }
+          historyPanel.classList.remove('active');
+        });
+        
+        historyItems.appendChild(itemEl);
+      });
+    }
+
+    function truncateContent(content) {
+      const maxLength = 100;
+      return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
+    }
+
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all history?')) {
+        history = [];
+        localStorage.removeItem('emailCleanerHistory');
+        renderHistory();
+      }
+    }
+
+    function setCategory(category) {
+      currentCategory = category;
+      document.querySelectorAll('.history-category').forEach(el => {
+        el.classList.remove('active');
+      });
+      document.querySelector(`.history-category[data-category="${category}"]`).classList.add('active');
+      renderHistory();
+    }
+
+    historyToggle.addEventListener('click', () => {
+      historyPanel.classList.add('active');
+    });
+
+    closeHistoryBtn.addEventListener('click', () => {
+      historyPanel.classList.remove('active');
+    });
+
+    clearHistoryBtn.addEventListener('click', clearHistory);
+
+    // Set up category filters
+    document.querySelectorAll('.history-category').forEach(category => {
+      category.addEventListener('click', () => {
+        setCategory(category.getAttribute('data-category'));
+      });
+    });
+
+    // Close history panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!historyPanel.contains(e.target) && e.target !== historyToggle) {
+        historyPanel.classList.remove('active');
+      }
+    });
 
     // File import
     importBtn.addEventListener('click', () => fileInput.click());
@@ -611,19 +1030,35 @@ To: recipient@example.com
       text = text.replace(/^X-Received: by[^\n]*(?:\r?\n.*)?/gmi, "");
       text = text.replace(/^\s*[\r\n]/gm, "");
       outputArea.value = text.trim();
+      // Add to history
+      addToHistory('cleaned', text.trim());
       // Reset actions after cleaning as content has changed
       resetAllActions();
     }
     cleanBtn.addEventListener('click', () => { cleanHeader(); maybeUpdatePreview(); });
 
+    // Export with custom filename
     exportBtn.addEventListener('click', () => {
       const text = outputArea.value;
       if (!text.trim()) { alert("Nothing to export."); return; }
+      
+      // Get filename from input or use default
+      let filename = exportFilenameInput.value.trim();
+      if (!filename) filename = "cleaned_header.txt";
+      
+      // Ensure filename has .txt extension
+      if (!filename.endsWith('.txt')) {
+        filename += '.txt';
+      }
+      
       const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "cleaned_header.txt";
+      link.download = filename;
       link.click();
+      
+      // Add to history
+      addToHistory('export', text, filename);
     });
 
     deselectBtn.addEventListener('click', () => {
@@ -692,17 +1127,23 @@ To: recipient@example.com
       // Toggle [ip]
       if (document.getElementById("toggleIp").checked && !actionsApplied.ip) {
         if (!text.includes("[ip]")) {
-          text = text.replace(/(<!DOCTYPE|<html|<img)/i, "\n[ip]\n$1");
+          text = text.replace(/(<!DOCTYPE|<html|<img|<body|<head)/i, "\n[ip]\n$1");
           actionsApplied.ip = true;
           ipStatus.style.display = 'block';
           changed = true;
         }
       }
 
-      // Add <head><select>
+      // Add <head><select> - place between [ip] and content
       if (document.getElementById("toggleHead").checked && !actionsApplied.head) {
         if (!text.includes("<head><select>")) {
-          text = text.replace(/(<!DOCTYPE[^>]*>)/i, "$1\n<head><select>");
+          // Look for [ip] followed by content and insert <head><select> between them
+          if (text.includes("[ip]")) {
+            text = text.replace(/(\[ip\]\s*)(<!DOCTYPE|<html|<img|<body|<head)/i, "$1<head><select>\n$2");
+          } else {
+            // If no [ip], add it at the beginning of the content
+            text = text.replace(/(<!DOCTYPE|<html|<img|<body|<head)/i, "<head><select>\n$1");
+          }
           actionsApplied.head = true;
           headStatus.style.display = 'block';
           changed = true;
@@ -742,6 +1183,10 @@ To: recipient@example.com
       outputArea.value = text;
       actionsApplied.subject = true;
       subjectStatus.style.display = 'block';
+      
+      // Add to history
+      addToHistory('subject', text, null, customSubject);
+      
       maybeUpdatePreview();
     }
     subjectBtn.addEventListener('click', applyCustomSubject);
@@ -766,6 +1211,9 @@ To: recipient@example.com
         actionsApplied.insert = true;
         insertStatus.style.display = 'block';
         maybeUpdatePreview();
+        
+        // Add to history
+        addToHistory('htmlInsert', customText);
       } else {
         alert("No <head><select> tag found in the content. Please apply the 'Add <head><select>' option first.");
       }
@@ -784,6 +1232,10 @@ To: recipient@example.com
     window.addEventListener("load", () => {
       const saved = localStorage.getItem("alwaysSelectParams");
       alwaysSelectInput.value = saved || defaultHeaders;
+      
+      // Load history
+      renderHistory();
+      
       // initial preview
       maybeUpdatePreview();
       
@@ -793,10 +1245,21 @@ To: recipient@example.com
         document.body.classList.add("dark-mode");
         darkModeToggle.classList.add("active");
       }
+      
+      // Check for saved filename preference
+      const savedFilename = localStorage.getItem("exportFilename");
+      if (savedFilename) {
+        exportFilenameInput.value = savedFilename;
+      }
     });
     applySelectBtn.addEventListener("click", () => { applyAlwaysSelect(); });
     resetDefaultBtn.addEventListener("click", () => {
       alwaysSelectInput.value = defaultHeaders; applyAlwaysSelect(); localStorage.setItem("alwaysSelectParams", defaultHeaders);
+    });
+    
+    // Save filename preference when changed
+    exportFilenameInput.addEventListener("input", () => {
+      localStorage.setItem("exportFilename", exportFilenameInput.value);
     });
 
     // ====== Live preview logic ======
@@ -984,5 +1447,4 @@ To: recipient@example.com
     maybeUpdatePreview();
   </script>
 </body>
-</html>
 </html>
